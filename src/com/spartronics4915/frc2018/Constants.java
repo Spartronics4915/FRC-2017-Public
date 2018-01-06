@@ -38,9 +38,9 @@ public class Constants extends ConstantsBase {
     public static double kCenterToIntakeDistance = 20.9675;
     public static double kCenterToRearBumperDistance = 14.1875;
     public static double kCenterToSideBumperDistance = 15.75;
-
+    
     /* CONTROL LOOP GAINS */
-
+    
     // PID gains for drive velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in inches per second.
     public static double kDriveHighGearVelocityKp = 1.2;
@@ -72,13 +72,16 @@ public class Constants extends ConstantsBase {
     // (Note that if multiple talons are dedicated to a mechanism, any sensors
     // are attached to the master)
 
+    public static int kTalonTimeoutMs = 10;
+    
     // Drive
     public static final int kLeftDriveMasterId = 3;
     public static final int kLeftDriveSlaveId = 1;
     public static final int kRightDriveMasterId = 4;
     public static final int kRightDriverSlaveId = 2;
     public static final int kIMUTalonId = 6;
-    public static final int kEncoderCodesPerRev = 250; // Not ticks, codes; ticks would be kEncoderCodesPerRev * 4 (for quadrature encoders at least)
+    public static final int kEncoderCodesPerRev = 250; // Encoder-specific value, for E4P-250-250-N-S-D-D
+    public static final int kEncoderTicksPerRev = kEncoderCodesPerRev * 4; // This should be one full rotation
     public static final int kNumCANDevices = 8;
     
     // Solenoids

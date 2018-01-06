@@ -1,7 +1,8 @@
 package com.team254.lib.util.drivers;
 
-import com.spartronics4915.lib.util.drivers.CANTalonFactory;
-import com.spartronics4915.lib.util.drivers.CANTalon;
+import com.spartronics4915.lib.util.drivers.TalonSRXFactory;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,8 +21,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(CANTalonFactory.class)
-public class CANTalonFactoryTest {
+@PrepareForTest(TalonSRXFactory.class)
+public class TalonSRXFactoryTest {
 
     @Test
     public void testWhichMethodsAreCalled() throws Exception {
@@ -63,22 +64,22 @@ public class CANTalonFactoryTest {
                 "createTableListener");
 
         final Set<String> uncalledMethodNames = new HashSet<>(
-                Arrays.stream(CANTalon.class.getMethods())
+                Arrays.stream(WPI_TalonSRX.class.getMethods())
                         .map(m -> m.getName())
                         .filter(name -> !acceptableUncalledMethodNames.contains(name))
                         .collect(Collectors.toSet()));
 
-        CANTalon talon = Mockito.mock(CANTalon.class, new Answer() {
+        WPI_TalonSRX talon = Mockito.mock(WPI_TalonSRX.class, new Answer() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
                 uncalledMethodNames.remove(invocationOnMock.getMethod().getName());
                 return null;
             }
         });
-        PowerMockito.whenNew(CANTalon.class).withAnyArguments().thenReturn(talon);
+        PowerMockito.whenNew(WPI_TalonSRX.class).withAnyArguments().thenReturn(talon);
 
-        CANTalon returnedTalon = CANTalonFactory.createDefaultTalon(1);
-        String talonInfo = CANTalonFactory.getFullTalonInfo(returnedTalon);
+        WPI_TalonSRX returnedTalon = TalonSRXFactory.createDefaultTalon(1);
+        String talonInfo = TalonSRXFactory.getFullTalonInfo(returnedTalon);
 
         Assert.assertEquals(
                 new HashSet<>(),
@@ -87,6 +88,6 @@ public class CANTalonFactoryTest {
 
     @Test
     public void testCanPrintInfo() {
-        System.out.println(CANTalonFactory.getFullTalonInfo(Mockito.mock(CANTalon.class)));
+        System.out.println(TalonSRXFactory.getFullTalonInfo(Mockito.mock(WPI_TalonSRX.class)));
     }
 }
