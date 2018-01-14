@@ -57,9 +57,9 @@ public class Constants extends ConstantsBase
     public static final double kDriveLowGearPositionRampRate = 48.0; // V/s
     public static final double kDriveLowGearNominalOutput = 0.5; // V
     public static final double kDriveLowGearMaxVelocity = 3.0 * 12.0 * 60.0 / (Math.PI * kDriveWheelDiameterInches); // 6 fps
-                                                                                                               // in RPM
+    // in RPM
     public static final double kDriveLowGearMaxAccel = 15.0 * 12.0 * 60.0 / (Math.PI * kDriveWheelDiameterInches); // 18 fps/s
-                                                                                                             // in RPM/s
+    // in RPM/s
 
     public static final double kDriveVoltageCompensationRampRate = 0.0;
 
@@ -79,7 +79,7 @@ public class Constants extends ConstantsBase
     // Example
     public static final int kPrimaryExampleId = 5;
     public static final int kSecondaryExampleId = 6;
-    
+
     // Solenoids
     public static final int kShifterSolenoidId = 0; // PCM 0, Solenoid 0
     public static final int kIntakeDeploySolenoidId = 1; // PCM 0, Solenoid 1
@@ -105,8 +105,8 @@ public class Constants extends ConstantsBase
     public static final double kDeltaLookAheadSpeed = kMaxLookAheadSpeed - kMinLookAheadSpeed;
 
     public static final double kInertiaSteeringGain = 0.0; // angular velocity command is multiplied by this gain *
-                                                     // our speed
-                                                     // in inches per sec
+    // our speed
+    // in inches per sec
     public static final double kSegmentCompletionTolerance = 0.05; // inches
     public static final double kPathFollowingMaxAccel = 120.0; // inches per second^2
     public static final double kPathFollowingMaxVel = 120.0; // inches per second
@@ -135,14 +135,13 @@ public class Constants extends ConstantsBase
     public static final double kCameraYawAngleDegrees = 0.0;
     public static final double kCameraDeadband = 0.0;
 
-
     public static final double kShooterOptimalRange = 100.0;
     public static final double kShooterOptimalRangeFloor = 95.0;
     public static final double kShooterOptimalRangeCeiling = 105.0;
 
     public static final double kShooterAbsoluteRangeFloor = 90.0;
     public static final double kShooterAbsoluteRangeCeiling = 130.0;
-    
+
     /**
      * Make an {@link Solenoid} instance for the single-number ID of the
      * solenoid

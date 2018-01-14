@@ -4,8 +4,9 @@ import com.spartronics4915.frc2018.subsystems.Example;
 
 public class ExampleAction implements Action
 {
+
     Example mExample = Example.getInstance();
-    
+
     @Override
     public boolean isFinished()
     {

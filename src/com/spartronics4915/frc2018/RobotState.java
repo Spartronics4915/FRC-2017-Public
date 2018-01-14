@@ -56,7 +56,7 @@ public class RobotState
 
     public static RobotState getInstance()
     {
-        if(instance_ == null)
+        if (instance_ == null)
         {
             instance_ = new RobotState();
         }

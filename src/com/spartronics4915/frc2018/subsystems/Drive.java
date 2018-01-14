@@ -35,7 +35,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * This subsystem consists of the robot's drivetrain: 4 CIM motors, 4 talons,
  * one solenoid and 2 pistons to shift gears,
- * and a Pigeon IMU board. The Drive subsystem has several control methods including
+ * and a Pigeon IMU board. The Drive subsystem has several control methods
+ * including
  * open loop, velocity control, and position
  * control. The Drive subsystem also has several methods that handle automatic
  * aiming, autonomous path driving, and
@@ -53,7 +54,7 @@ public class Drive extends Subsystem
 
     public static Drive getInstance()
     {
-        if(mInstance == null)
+        if (mInstance == null)
         {
             mInstance = new Drive();
         }

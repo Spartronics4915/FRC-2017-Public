@@ -19,7 +19,7 @@ public class RobotStateEstimator implements Loop
 
     public static RobotStateEstimator getInstance()
     {
-        if(instance_ == null)
+        if (instance_ == null)
         {
             instance_ = new RobotStateEstimator();
         }

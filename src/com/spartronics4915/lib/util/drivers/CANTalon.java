@@ -76,7 +76,6 @@ public class CANTalon extends WPI_TalonSRX
         this.setControlFramePeriod(controlPeriodMs, enablePeriodMs);
     }
 
-
     /**
      * Converts RPM to Native Unit velocity.
      * RPM is rotations per minute.
@@ -89,11 +88,12 @@ public class CANTalon extends WPI_TalonSRX
      */
     private int rpmToNativeVelocity(double rpm)
     {
-        if (m_codesPerRevolution == 0) return (int) Math.round(rpm);
+        if (m_codesPerRevolution == 0)
+            return (int) Math.round(rpm);
         double rotationsPer100MS = (rpm / 60) / 10;
         return (int) Math.round(rotationsPer100MS * m_codesPerRevolution);
     }
-    
+
     /**
      * Converts Native Unit velocity to RPM.
      * RPM is rotations per minute.
@@ -106,23 +106,26 @@ public class CANTalon extends WPI_TalonSRX
      */
     private int nativeVelocityToRpm(double nativeVelocity)
     {
-        if (m_codesPerRevolution == 0) return (int) Math.round(nativeVelocity);
+        if (m_codesPerRevolution == 0)
+            return (int) Math.round(nativeVelocity);
         double nativeUnitsPerMinute = nativeVelocity * 10 * 60;
         return (int) Math.round(nativeUnitsPerMinute / m_codesPerRevolution);
     }
-    
+
     /**
      * Converts encoder codes (encoder specific)
      * to wheel rotations.
      * <b>configEncoderCodesPerRev must have been called for
      * this to work!</b>
      * 
-     * @param Absolute encoder codes (use {@link nativeVelocityToRpm} for non-absolute units)
+     * @param Absolute encoder codes (use {@link nativeVelocityToRpm} for
+     *        non-absolute units)
      * @return Absolute wheel rotations
      */
     private double encoderCodesToRotations(double codes)
     {
-        if (m_codesPerRevolution == 0) return codes;
+        if (m_codesPerRevolution == 0)
+            return codes;
         return codes / m_codesPerRevolution;
     }
 
@@ -137,7 +140,8 @@ public class CANTalon extends WPI_TalonSRX
     @Override
     public void set(double value)
     {
-        if (m_outputReversed) value *= -1;
+        if (m_outputReversed)
+            value *= -1;
         // We've integrated LazyCANTalon into here
         if (value != m_lastSetpoint || m_controlMode != m_lastControlMode)
         {
@@ -272,7 +276,7 @@ public class CANTalon extends WPI_TalonSRX
         m_outputReversed = s;
         // XXX: this.setInverted seems to cause a stack overflow... This works around that.
     }
-    
+
     /**
      * Configures the soft limit threshold on the forward sensor.
      * 
@@ -434,9 +438,9 @@ public class CANTalon extends WPI_TalonSRX
     public void configFwdLimitSwitchNormallyOpen(boolean s)
     {
         this.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, /*
-                                                                               * XXX:
-                                                                               * LimitSwitchSource
-                                                                               */
+                                                                                  * XXX:
+                                                                                  * LimitSwitchSource
+                                                                                  */
                 s ? LimitSwitchNormal.NormallyOpen : LimitSwitchNormal.NormallyClosed,
                 s_defaultTimeoutMS);
     }
@@ -444,9 +448,9 @@ public class CANTalon extends WPI_TalonSRX
     public void configRevLimitSwitchNormallyOpen(boolean s)
     {
         this.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, /*
-                                                                               * XXX:
-                                                                               * LimitSwitchSource
-                                                                               */
+                                                                                  * XXX:
+                                                                                  * LimitSwitchSource
+                                                                                  */
                 s ? LimitSwitchNormal.NormallyOpen : LimitSwitchNormal.NormallyClosed,
                 s_defaultTimeoutMS);
     }

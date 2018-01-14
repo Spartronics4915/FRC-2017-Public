@@ -264,7 +264,8 @@ public class Robot extends IterativeRobot
             {
                 mLED.setWantedState(LED.WantedState.BLINK);
             }
-            if (mControlBoard.getExample()) {
+            if (mControlBoard.getExample())
+            {
                 mExample.setOn();
             }
 

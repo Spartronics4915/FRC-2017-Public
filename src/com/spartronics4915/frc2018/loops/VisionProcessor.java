@@ -23,7 +23,7 @@ public class VisionProcessor implements Loop, VisionUpdateReceiver
 
     public static VisionProcessor getInstance()
     {
-        if(instance_ == null)
+        if (instance_ == null)
         {
             instance_ = new VisionProcessor();
         }

@@ -25,11 +25,13 @@ import com.spartronics4915.lib.util.drivers.CANTalonFactory;
  */
 public class Example extends Subsystem
 {
+
     // The two fields below are the only time you should use the static
     // keyword without knowing what it means.
     private static Example sInstance = null;
-    
-    public static Example getInstance() {
+
+    public static Example getInstance()
+    {
         // Example is a singleton, meaning that only one object of the class
         // is ever instantiated.
         if (sInstance == null)
@@ -38,23 +40,28 @@ public class Example extends Subsystem
         }
         return sInstance;
     }
-    
+
     // You can add state enums here
-    
-    private Loop mLoop = new Loop() {
+
+    private Loop mLoop = new Loop()
+    {
+
         @Override
         public void onStart(double timestamp)
         {
             // Nothing needs to happen here yet
-            
+
         }
-        
+
         @Override
-        public void onLoop(double timestamp) {
-            synchronized (Example.this) {
+        public void onLoop(double timestamp)
+        {
+            synchronized (Example.this)
+            {
                 // State transitions can happen here
                 if (mPrimaryMotor.isFwdLimitSwitchClosed() ||
-                        mSecondaryMotor.isFwdLimitSwitchClosed()) {
+                        mSecondaryMotor.isFwdLimitSwitchClosed())
+                {
                     setOff();
                 }
             }
@@ -64,51 +71,53 @@ public class Example extends Subsystem
         public void onStop(double timestamp)
         {
             // Nothing needs to happen here yet
-            
-        } 
+
+        }
     };
-    
+
     // Hardware
     private CANTalon mPrimaryMotor, mSecondaryMotor;
-    
+
     private Example()
     {
         // You should instantiate your motors in the constructor of your subsystem
         mPrimaryMotor = CANTalonFactory.createDefaultTalon(Constants.kPrimaryExampleId);
         mSecondaryMotor = CANTalonFactory.createDefaultTalon(Constants.kSecondaryExampleId);
-        
+
         // Set up limit switches
         mPrimaryMotor.configFwdLimitSwitchNormallyOpen(false);
         mSecondaryMotor.configFwdLimitSwitchNormallyOpen(false);
-        
+
         // Use an open loop control mode
         mPrimaryMotor.changeControlMode(ControlMode.PercentOutput);
         mSecondaryMotor.changeControlMode(ControlMode.PercentOutput);
     }
-    
-    private void setOpenLoop(double speed) {
+
+    private void setOpenLoop(double speed)
+    {
         // We avoid code duplication (which is bad) by having as single method for controlling motors
         mPrimaryMotor.set(ControlMode.PercentOutput, speed);
         mSecondaryMotor.set(ControlMode.PercentOutput, speed);
     }
-    
+
     // Any method called from an Action MUST be synchronized
-    public synchronized void setOn() {
+    public synchronized void setOn()
+    {
         setOpenLoop(1.0);
     }
-    
+
     // Any method called from an Action MUST be synchronized
-    public synchronized void setOff() {
+    public synchronized void setOff()
+    {
         setOpenLoop(0.0);
     }
-    
+
     @Override
     public void outputToSmartDashboard()
     {
         /*
          * If we want to put a graph or visualization for debug purposes on the
          * dashboard, you would output information for that visualization here.
-         * 
          * This methods overrides the abstract method of the same name in the
          * superclass (Subsystem). That just means that every Subsystem needs
          * to have an outputToSmartDashboard method.
@@ -131,7 +140,7 @@ public class Example extends Subsystem
     {
         // Our only sensors are limit switches, which don't really need zeroing
     }
-    
+
     @Override
     public void registerEnabledLoops(Looper enabledLooper)
     {

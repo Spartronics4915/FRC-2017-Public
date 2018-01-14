@@ -14,7 +14,7 @@ public interface ControlBoardInterface
     boolean getQuickTurn();
 
     boolean getLowGear();
-    
+
     boolean getExample();
 
     // OPERATOR CONTROLS
