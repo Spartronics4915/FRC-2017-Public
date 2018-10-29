@@ -1,6 +1,9 @@
 package com.spartronics4915.frc2018;
 
+import com.spartronics4915.lib.util.Logger;
+
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Contains the button mappings for the competition control board. Like the
@@ -15,16 +18,16 @@ public class ControlBoard implements ControlBoardInterface
 {
 
     private static ControlBoardInterface mInstance = null;
-
-    private static final boolean kUseGamepad = false;
+    
+    private static final boolean kUseBackupDrivestick = false;
 
     public static ControlBoardInterface getInstance()
     {
         if (mInstance == null)
         {
-            if (kUseGamepad)
+            if(kUseBackupDrivestick)
             {
-                mInstance = new GamepadControlBoard();
+                mInstance = new BackupControlBoard();
             }
             else
             {
@@ -34,52 +37,32 @@ public class ControlBoard implements ControlBoardInterface
         return mInstance;
     }
 
-    private final Joystick mThrottleStick;
-    private final Joystick mTurnStick;
+    private final Joystick mDrivestick;
     private final Joystick mButtonBoard;
 
     protected ControlBoard()
     {
-        mThrottleStick = new Joystick(0);
-        mTurnStick = new Joystick(1);
-        mButtonBoard = new Joystick(2);
-    }
-
-    // DRIVER CONTROLS
-    @Override
-    public double getThrottle()
-    {
-        return -mThrottleStick.getRawAxis(0);
+        mDrivestick = new Joystick(0);
+        mButtonBoard = new Joystick(1);
     }
 
     @Override
-    public double getTurn()
-    {
-        return -mTurnStick.getY();
+    public double getThrottle() {
+        return mDrivestick.getY();
     }
 
     @Override
-    public boolean getQuickTurn()
-    {
-        return mTurnStick.getRawButton(1);
+    public double getTurn() {
+        return mDrivestick.getX();
     }
 
     @Override
-    public boolean getLowGear()
-    {
-        return mThrottleStick.getRawButton(2);
+    public boolean getQuickTurn() {
+        return mDrivestick.getRawButton(1);
     }
 
     @Override
-    public boolean getBlinkLEDButton()
-    {
-        return mButtonBoard.getRawButton(9);
-    }
-
-    @Override
-    public boolean getExample()
-    {
-        // See XboxControlBoard
-        return false;
+    public boolean getSlowDrive() {
+        return mDrivestick.getRawButton(14);
     }
 }

@@ -5,12 +5,9 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import com.spartronics4915.frc2018.auto.AutoModeBase;
-import com.spartronics4915.frc2018.auto.modes.ExampleMode;
-import com.spartronics4915.frc2018.auto.modes.StandStillMode;
-import com.spartronics4915.frc2018.auto.modes.TestPathMode;
-import com.spartronics4915.frc2018.auto.modes.TestTurnMode;
+import com.spartronics4915.frc2018.auto.modes.*;
+import com.spartronics4915.lib.util.Logger;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -37,12 +34,26 @@ public class AutoModeSelector
     }
 
     private static final AutoModeCreator mDefaultMode = new AutoModeCreator(
-            "Do Nothing",
-            () -> new StandStillMode());
+            "All: Cross Baseline",
+            () -> new CrossBaselineMode());
     private static final AutoModeCreator[] mAllModes = {
-            new AutoModeCreator("Test Path Mode", () -> new TestPathMode()),
-            new AutoModeCreator("Test Turning Mode", () -> new TestTurnMode()),
-            new AutoModeCreator("Example Mode", () -> new ExampleMode())
+            new AutoModeCreator("A: Place at Scale", () -> new PlaceScaleFromAMode()),
+            new AutoModeCreator("C: Place at Scale", () -> new PlaceScaleFromCMode()),
+            new AutoModeCreator("A: Place at Switch", () -> new PlaceSwitchFromAMode()),
+            new AutoModeCreator("B: Place at Switch", () -> new PlaceSwitchFromBMode()),
+            new AutoModeCreator("C: Place at Switch", () -> new PlaceSwitchFromCMode()),
+            new AutoModeCreator("A: Place at Optimized Position", () -> new PlaceOptimizedFromAMode()),
+            new AutoModeCreator("C: Place at Optimized Position", () -> new PlaceOptimizedFromCMode()),
+            new AutoModeCreator("All: Cross Baseline", () -> new CrossBaselineMode()),
+            new AutoModeCreator("Do nothing", () -> new StandStillMode()),
+            new AutoModeCreator("Other: Prepare Robot", () -> new PrepareRobotMode()),
+            new AutoModeCreator("Test: Path", () -> new TestPathMode()),
+            new AutoModeCreator("Test: Velocity PID Tuning", () -> new TestDrivePIDMode("velocity")),
+            new AutoModeCreator("Test: Position PID Tuning", () -> new TestDrivePIDMode("position")),
+            new AutoModeCreator("Test: Stress Motor Mode", () -> new StressMotorsMode()),
+            new AutoModeCreator("Test: Turn to Cube Mode", () -> new TurnToCubeMode()),
+            new AutoModeCreator("Test: Find the Cube Mode", () -> new FindCube())
+
             // e.g. new AutoModeCreator("Boiler Gear then 10 Ball Shoot Red", () -> new BoilerGearThenShootModeRed()),
     };
 
@@ -54,7 +65,6 @@ public class AutoModeSelector
             modesArray.add(mode.mDashboardName);
         }
         SmartDashboard.putString(AUTO_OPTIONS_DASHBOARD_KEY, String.join(",", modesArray));
-        SmartDashboard.putString(SELECTED_AUTO_MODE_DASHBOARD_KEY, mDefaultMode.mDashboardName);
     }
 
     public static AutoModeBase getSelectedAutoMode()
@@ -62,6 +72,7 @@ public class AutoModeSelector
         String selectedModeName = SmartDashboard.getString(
                 SELECTED_AUTO_MODE_DASHBOARD_KEY,
                 "NO SELECTED MODE!!!!");
+        Logger.notice("Auto mode name " + selectedModeName);
         for (AutoModeCreator mode : mAllModes)
         {
             if (mode.mDashboardName.equals(selectedModeName))
@@ -69,7 +80,7 @@ public class AutoModeSelector
                 return mode.mCreator.get();
             }
         }
-        DriverStation.reportError("Failed to select auto mode: " + selectedModeName, false);
+        Logger.error("AutoModeSelector failed to select auto mode: " + selectedModeName);
         return mDefaultMode.mCreator.get();
     }
 }

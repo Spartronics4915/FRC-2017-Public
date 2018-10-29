@@ -1,9 +1,26 @@
-# Spartronics 4915 modified clone of Team 254's 2017 Codebase [![Build Status](https://travis-ci.org/Spartronics4915/Spartronics-254Base.svg?branch=master)](https://travis-ci.org/Spartronics4915/Spartronics-254Base)
+# 2018-POWERUP [![Build Status](https://travis-ci.com/Spartronics4915/2018-POWERUP.svg?token=fyEWjwiNdUZ8u7W5snBy&branch=master)](https://travis-ci.com/Spartronics4915/2018-POWERUP)
 
-We've cloned the 254 codebase and modified it to better match our team's
-hardware, vision, programming and electronics conventions. We've also ported 
-it to the 2018 WPI and CTRE interfaces.  Code can be built via command-line
-ant or your favorite Java IDE (Eclipse, IntelliJ, ...).
+Welcome to the github for Spartronics code for the FRC 2018-POWERUP game.
+
+### Helpful Links
+
+[Best Practices](BestPractices.md) |
+[WPILib](http://wpilib.screenstepslive.com/s/4485) |
+[WPILib Java Ref](http://first.wpi.edu/FRC/roborio/release/docs/java) |
+[CTRE Java Ref](http://www.ctr-electronics.com/downloads/api/java/html/index.html) |
+[CANTalon User's Guide](http://www.ctr-electronics.com/Talon%20SRX%20User's%20Guide.pdf) |
+[CANTalon Ref Guide](http://www.ctr-electronics.com/Talon%20SRX%20Software%20Reference%20Manual.pdf) |
+[Travis CI](https://travis-ci.com/Spartronics4915/2018-POWERUP)
+
+[Learning this Codebase](LearningCodebase.md) |
+[Spartronics Developer Handbook](https://binnur.gitbooks.io/spartronics-developers-handbook/content/) |
+[Spartronics Intro Slides](https://docs.google.com/presentation/d/1ZiMBC9y3xrwFk1akdaiV_BMLLS6EyY6BSfiTRQo1KlM/edit#slide=id.g190898ba99_1_437)
+
+## Code Ancestry/Acknowledgements
+This is a derivative of team 254's 2017 codebase, modified to better match our
+team's hardware, vision, programming and electronics conventions. We've also
+ported it to the 2018 WPI and CTRE interfaces.  Code can be built via
+command-line ant or your favorite Java IDE (Eclipse, IntelliJ, ...).
 
 Modifications include:
 * refactor into our namespaces
@@ -21,5 +38,5 @@ Modifications include:
 
 Many thanks to CheesyFolks (Team254) for sharing your code!
 
-For more details on code highlights, please refer to CheesyNotes.md.
-
+For more details on code highlights, please refer to
+[CheesyNotes](CheesyNotes.md).

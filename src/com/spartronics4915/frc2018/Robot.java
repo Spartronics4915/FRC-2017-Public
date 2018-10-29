@@ -13,20 +13,19 @@ import com.spartronics4915.frc2018.loops.Looper;
 import com.spartronics4915.frc2018.loops.RobotStateEstimator;
 import com.spartronics4915.frc2018.loops.VisionProcessor;
 import com.spartronics4915.frc2018.paths.profiles.PathAdapter;
+import com.spartronics4915.frc2018.subsystems.Climber;
 import com.spartronics4915.frc2018.subsystems.ConnectionMonitor;
 import com.spartronics4915.frc2018.subsystems.Drive;
-import com.spartronics4915.frc2018.subsystems.Example;
+import com.spartronics4915.frc2018.subsystems.Harvester;
 import com.spartronics4915.frc2018.subsystems.LED;
+import com.spartronics4915.frc2018.subsystems.ScissorLift;
 import com.spartronics4915.frc2018.subsystems.Superstructure;
 import com.spartronics4915.lib.util.CANProbe;
 import com.spartronics4915.lib.util.CheesyDriveHelper;
-import com.spartronics4915.lib.util.CrashTracker;
-import com.spartronics4915.lib.util.DelayedBoolean;
+import com.spartronics4915.lib.util.Logger;
 import com.spartronics4915.lib.util.DriveSignal;
-import com.spartronics4915.lib.util.SmartDashboardUtil;
 import com.spartronics4915.lib.util.math.RigidTransform2d;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -38,14 +37,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * are already instantiated upon robot startup; for those classes, the robot
  * gets the instance as opposed to creating a
  * new object
- * 
+ *
  * After initializing all robot parts, the code sets up the autonomous and
  * teleoperated cycles and also code that runs
  * periodically inside both routines.
- * 
+ *
  * This is the nexus/converging point of the robot code and the best place to
  * start exploring.
- * 
+ *
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as
  * described in the IterativeRobot documentation. If you change the name of this
@@ -56,41 +55,37 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot
 {
 
-    // Get subsystem instances
-    private Drive mDrive = Drive.getInstance();
-    private Superstructure mSuperstructure = Superstructure.getInstance();
-    private LED mLED = LED.getInstance();
-    private Example mExample = Example.getInstance();
-    private RobotState mRobotState = RobotState.getInstance();
+    // NB: make sure to construct objects in robotInit, not member declaration,
+    //  and usually not constructor.
+    private Drive mDrive = null;
+    private Superstructure mSuperstructure = null;
+    private LED mLED = null;
+    private Climber mClimber = null;
+    private Harvester mHarvester = null;
+    private ScissorLift mLifter = null;
+    private RobotState mRobotState = null;
     private AutoModeExecuter mAutoModeExecuter = null;
+    private ConnectionMonitor mConnectionMonitor = null;
 
     // Create subsystem manager
-    private final SubsystemManager mSubsystemManager = new SubsystemManager(
-            Arrays.asList(Drive.getInstance(), Superstructure.getInstance(),
-                    ConnectionMonitor.getInstance(), LED.getInstance(), Example.getInstance()));
+    private SubsystemManager mSubsystemManager = null;
 
     // Initialize other helper objects
-    private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
-    private ControlBoardInterface mControlBoard = new XboxControlBoard();
+    private CheesyDriveHelper mCheesyDriveHelper = null;
+    private ControlBoardInterface mControlBoard = null;
 
-    private Looper mEnabledLooper = new Looper();
+    private Looper mEnabledLooper = null;
 
-    //    private VisionServer mVisionServer = VisionServer.getInstance();
-
-    private AnalogInput mCheckLightButton = new AnalogInput(Constants.kLEDOnId);
-
-    private DelayedBoolean mDelayedAimButton;
+    // smartdashboard keys
+    private static final String kRobotVerbosity = "Robot/Verbosity";
+    private static final String kRobotTestModeOptions = "TestModeOptions";
+    private static final String kRobotTestMode = "TestMode";
+    private static final String kRobotTestVariant = "TestVariant";
 
     public Robot()
     {
-        System.out.println("Robot is constructing.");
-        CrashTracker.logRobotConstruction();
-    }
-
-    public void zeroAllSensors()
-    {
-        mSubsystemManager.zeroSensors();
-        mRobotState.reset(Timer.getFPGATimestamp(), new RigidTransform2d());
+        Logger.logRobotConstruction();
+        // please defer initialization of objects until robotInit
     }
 
     /**
@@ -101,7 +96,10 @@ public class Robot extends IterativeRobot
     public void robotInit()
     {
         // Version string and related information
-        try (InputStream manifest = getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF"))
+        boolean success = false;
+        Logger.logRobotInit();
+        try (InputStream manifest =
+                getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF"))
         {
             // build a version string
             Attributes attributes = new Manifest(manifest).getMainAttributes();
@@ -109,62 +107,92 @@ public class Robot extends IterativeRobot
                     "  on: " + attributes.getValue("Built-At") +
                     "  (" + attributes.getValue("Code-Version") + ")";
             SmartDashboard.putString("Build", buildStr);
+            SmartDashboard.putString(kRobotVerbosity, "NOTICE"); // competition verbosity
 
-            System.out.println("=================================================");
-            System.out.println(Instant.now().toString());
-            System.out.println("Built " + buildStr);
-            System.out.println("=================================================");
+            Logger.notice("=================================================");
+            Logger.notice(Instant.now().toString());
+            Logger.notice("Built " + buildStr);
+            Logger.notice("=================================================");
 
         }
         catch (IOException e)
         {
             SmartDashboard.putString("Build", "version not found!");
-            System.out.println("Build version not found!");
+            Logger.warning("Build version not found!");
             DriverStation.reportError(e.getMessage(), false /*
                                                              * no stack trace
                                                              * needed
                                                              */);
         }
-
         try
         {
-            CrashTracker.logRobotInit();
-
-            CANProbe cp = new CANProbe();
-            ArrayList<String> canDevices = cp.Find();
-            System.out.println("CANDevicesFound:\n" + canDevices);
+            Logger.notice("Robot begin init ------------------");
+            // NB: make sure to probe for can devices FIRST since subsystems
+            //  may invoke its validate methods.
+            CANProbe canProbe = CANProbe.getInstance();
+            ArrayList<String> canReport = canProbe.getReport();
+            Logger.notice("CANDevicesFound: " + canReport);
+            int numDevices = canProbe.getCANDeviceCount();
             SmartDashboard.putString("CANBusStatus",
-                    canDevices.size() == Constants.kNumCANDevices ? "OK" : ("" + canDevices.size() + "/" + Constants.kNumCANDevices));
+                    numDevices == Constants.kNumCANDevices ? "OK"
+                            : ("" + numDevices + "/" + Constants.kNumCANDevices));
+
+            // Subsystem instances
+            mDrive = Drive.getInstance();
+            mLED = LED.getInstance();
+            mClimber = Climber.getInstance();
+            mHarvester = Harvester.getInstance();
+            mLifter = ScissorLift.getInstance();
+            mSuperstructure = Superstructure.getInstance();
+
+            mRobotState = RobotState.getInstance();
+            mAutoModeExecuter = null;
+            mConnectionMonitor = ConnectionMonitor.getInstance();
+            mSubsystemManager = new SubsystemManager(
+                    Arrays.asList(mDrive, mSuperstructure,
+                            mConnectionMonitor, mLED, mClimber, mHarvester, mLifter));
+
+            // Initialize other helper objects
+            mCheesyDriveHelper = new CheesyDriveHelper();
+            mControlBoard = new ControlBoard();
+
+            mEnabledLooper = new Looper();
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mEnabledLooper.register(VisionProcessor.getInstance());
             mEnabledLooper.register(RobotStateEstimator.getInstance());
 
-            //            mVisionServer.addVisionUpdateReceiver(VisionProcessor.getInstance());
-
             AutoModeSelector.initAutoModeSelector();
-
-            mDelayedAimButton = new DelayedBoolean(Timer.getFPGATimestamp(), 0.1);
-            // Force an true update now to prevent robot from running at start.
-            mDelayedAimButton.update(Timer.getFPGATimestamp(), true);
+            SmartDashboard.putString(kRobotTestModeOptions,
+                    "None,ArticulatedGrabber,Climber,Drive,Harvester,LED,ScissorLift,All");
+            SmartDashboard.putString(kRobotTestMode, "None");
+            SmartDashboard.putString(kRobotTestVariant, "");
 
             // Pre calculate the paths we use for auto.
             PathAdapter.calculatePaths();
+            zeroAllSensors();
+            success = true;
 
         }
         catch (Throwable t)
         {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
+            Logger.logThrowableCrash(t);
+            // don't throw here, leads to "Robots should not quit..." // throw t;
         }
-        zeroAllSensors();
+        Logger.notice("robotInit complete, success:" + success);
+    }
+
+    public void zeroAllSensors()
+    {
+        mSubsystemManager.zeroSensors();
+        mRobotState.reset(Timer.getFPGATimestamp(), new RigidTransform2d());
     }
 
     /**
      * Initializes the robot for the beginning of autonomous mode (set
      * drivebase, intake and superstructure to correct
      * states). Then gets the correct auto mode from the AutoModeSelector
-     * 
+     *
      * @see AutoModeSelector.java
      */
     @Override
@@ -172,9 +200,9 @@ public class Robot extends IterativeRobot
     {
         try
         {
-            CrashTracker.logAutoInit();
-
-            System.out.println("Auto start timestamp: " + Timer.getFPGATimestamp());
+            Logger.setVerbosity(SmartDashboard.getString(kRobotVerbosity, "NOTICE"));
+            Logger.logAutoInit();
+            Logger.notice("Auto start timestamp: " + Timer.getFPGATimestamp());
 
             if (mAutoModeExecuter != null)
             {
@@ -186,11 +214,9 @@ public class Robot extends IterativeRobot
 
             mAutoModeExecuter = null;
 
-            // Shift to high
-            mDrive.setHighGear(true);
-            mDrive.setBrakeMode(true);
-
             mEnabledLooper.start();
+            mHarvester.setWantedState(Harvester.WantedState.GRAB); // Make sure the solenoids are doing what we want
+            
             mAutoModeExecuter = new AutoModeExecuter();
             mAutoModeExecuter.setAutoMode(AutoModeSelector.getSelectedAutoMode());
             mAutoModeExecuter.start();
@@ -198,7 +224,7 @@ public class Robot extends IterativeRobot
         }
         catch (Throwable t)
         {
-            CrashTracker.logThrowableCrash(t);
+            Logger.logThrowableCrash(t);
             throw t;
         }
     }
@@ -209,71 +235,61 @@ public class Robot extends IterativeRobot
     @Override
     public void autonomousPeriodic()
     {
-        allPeriodic();
+        allButTestPeriodic();
     }
 
     /**
-     * Initializes the robot for the beginning of teleop
+     * Initializes the robot for the beginning of teleop.
+     * Note that between auto and tele, we transition to disabled state.
      */
     @Override
     public void teleopInit()
     {
         try
         {
-            CrashTracker.logTeleopInit();
+            Logger.setVerbosity(SmartDashboard.getString(kRobotVerbosity, "NOTICE"));
+            Logger.logTeleopInit();
 
-            // Start loopers
-            mEnabledLooper.start();
+            // NB: don't call zeroAllSensors here, we aren't certain what configuration
+            // the robot is currently in.  Moreover, we don't want to lose RobotState.
+
+            mEnabledLooper.start(); // starts subsystem loopers.
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
-            mDrive.setBrakeMode(false);
-            // Shift to high
-            mDrive.setHighGear(true);
-            zeroAllSensors();
+            mHarvester.setWantedState(Harvester.WantedState.GRAB); // Make sure the solenoids are doing what we want
         }
         catch (Throwable t)
         {
-            CrashTracker.logThrowableCrash(t);
+            Logger.logThrowableCrash(t);
             throw t;
         }
     }
 
     /**
      * This function is called periodically during operator control.
-     * 
+     *
      * The code uses state machines to ensure that no matter what buttons the
-     * driver presses, the robot behaves in a
-     * safe and consistent manner.
-     * 
+     * driver presses, the robot behaves in a safe and consistent manner.
+     *
      * Based on driver input, the code sets a desired state for each subsystem.
-     * Each subsystem will constantly compare
-     * its desired and actual states and act to bring the two closer.
+     * Each subsystem will constantly compare its desired and actual states
+     * and act to bring the two closer.
      */
+
     @Override
     public void teleopPeriodic()
     {
         try
         {
-            double throttle = mControlBoard.getThrottle();
-            double turn = mControlBoard.getTurn();
-            mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, mControlBoard.getQuickTurn(),
-                    !mControlBoard.getLowGear()));
-            boolean wantLowGear = mControlBoard.getLowGear();
-            mDrive.setHighGear(!wantLowGear);
+            // Check ControlBoard here
 
-            if (mControlBoard.getBlinkLEDButton())
-            {
-                mLED.setWantedState(LED.WantedState.BLINK);
-            }
-            if (mControlBoard.getExample())
-            {
-                mExample.setOn();
-            }
-
-            allPeriodic();
+            mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(mControlBoard.getThrottle(), mControlBoard.getTurn(),
+                        mControlBoard.getQuickTurn(), mControlBoard.getSlowDrive()));
+            
+            allButTestPeriodic();
         }
         catch (Throwable t)
         {
-            CrashTracker.logThrowableCrash(t);
+            Logger.logThrowableCrash(t);
             throw t;
         }
     }
@@ -283,14 +299,15 @@ public class Robot extends IterativeRobot
     {
         try
         {
-            CrashTracker.logDisabledInit();
+            Logger.setVerbosity(SmartDashboard.getString(kRobotVerbosity, "NOTICE"));
+            Logger.logDisabledInit();
 
             if (mAutoModeExecuter != null)
             {
                 mAutoModeExecuter.stop();
             }
             mAutoModeExecuter = null;
-
+            
             mEnabledLooper.stop();
 
             // Call stop on all our Subsystems.
@@ -299,64 +316,108 @@ public class Robot extends IterativeRobot
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
 
             PathAdapter.calculatePaths();
+
+            mLED.setVisionLampOff();
         }
         catch (Throwable t)
         {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
+            Logger.logThrowableCrash(t);
+            // leads to Robots should not quit // throw t;
         }
     }
 
     @Override
     public void disabledPeriodic()
     {
-        final double kVoltageThreshold = 0.15;
-        if (mCheckLightButton.getAverageVoltage() < kVoltageThreshold)
-        {
-            mLED.setLEDOn();
-        }
-        else
-        {
-            mLED.setLEDOff();
-        }
-
-        zeroAllSensors();
-        allPeriodic();
+        // don't zero sensors during disabledPeriodic... zeroAllSensors();
+        allButTestPeriodic();
     }
 
     @Override
     public void testInit()
     {
-        Timer.delay(0.5);
+        Logger.setVerbosity(SmartDashboard.getString(kRobotVerbosity, "NOTICE"));
+        String testMode = SmartDashboard.getString(kRobotTestMode, "None");
+        String testVariant = SmartDashboard.getString(kRobotTestVariant, "");
 
-        boolean results = Drive.getInstance().checkSystem();
-        // e.g. results &= Intake.getInstance().checkSystem();
-
-        if (!results)
+        if (testMode.equals("None"))
         {
-            System.out.println("CHECK ABOVE OUTPUT SOME SYSTEMS FAILED!!!");
+            Logger.notice("Robot: no tests to run");
+            return;
         }
         else
         {
-            System.out.println("ALL SYSTEMS PASSED");
+            Logger.notice("Robot: running test mode " + testMode +
+                    " variant:" + testVariant + " -------------------------");
+            mEnabledLooper.stop();
+        }
+        Logger.notice("Waiting 5 seconds before running test methods.");
+        Timer.delay(5);
+
+        boolean success = true;
+        if (testMode.equals("Drive") || testMode.equals("All"))
+        {
+            success &= mDrive.checkSystem(testVariant);
+        }
+
+        if (testMode.equals("Climber") || testMode.equals("All"))
+        {
+            success &= mClimber.checkSystem(testVariant);
+        }
+
+        if (testMode.equals("Harvester") || testMode.equals("All"))
+        {
+            success &= mHarvester.checkSystem(testVariant);
+        }
+
+        if (testMode.equals("LED") || testMode.equals("All"))
+        {
+            success &= mLED.checkSystem(testVariant);
+        }
+
+        if (testMode.equals("ScissorLift") || testMode.equals("All"))
+        {
+            success &= mLifter.checkSystem(testVariant);
+        }
+
+        if (!success)
+        {
+            Logger.error("Robot: CHECK ABOVE OUTPUT SOME SYSTEMS FAILED!!!");
+        }
+        else
+        {
+            Logger.notice("Robot: ALL SYSTEMS PASSED");
         }
     }
 
     @Override
     public void testPeriodic()
     {
+        mRobotState.outputToSmartDashboard();
+        mSubsystemManager.outputToSmartDashboard();
     }
 
     /**
-     * Helper function that is called in all periodic functions
+     * Helper function that is shared between above periodic functions
      */
-    public void allPeriodic()
+    private void allButTestPeriodic()
     {
         mRobotState.outputToSmartDashboard();
         mSubsystemManager.outputToSmartDashboard();
         mSubsystemManager.writeToLog();
         mEnabledLooper.outputToSmartDashboard();
+        mConnectionMonitor.setLastPacketTime(Timer.getFPGATimestamp());
+    }
 
-        ConnectionMonitor.getInstance().setLastPacketTime(Timer.getFPGATimestamp());
+    /**
+     * Unused but required function. Plays a similar role to our
+     * allPeriodic method. Presumably the timing in IterativeRobotBase wasn't
+     * to the liking of initial designers of this system. Perhaps because
+     * we don't want it to run during testPeriodic.
+     */
+    @Override
+    public void robotPeriodic()
+    {
+        // intentionally left blank
     }
 }

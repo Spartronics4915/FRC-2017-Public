@@ -4,9 +4,12 @@ import com.spartronics4915.frc2018.auto.AutoModeBase;
 import com.spartronics4915.frc2018.auto.AutoModeEndedException;
 import com.spartronics4915.frc2018.auto.actions.DrivePathAction;
 import com.spartronics4915.frc2018.auto.actions.ResetPoseFromPathAction;
-import com.spartronics4915.frc2018.auto.actions.WaitAction;
+import com.spartronics4915.frc2018.auto.actions.TurnToHeadingAction;
 import com.spartronics4915.frc2018.paths.PathContainer;
 import com.spartronics4915.frc2018.paths.TestPath;
+import com.spartronics4915.lib.util.math.Rotation2d;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TestPathMode extends AutoModeBase
 {
@@ -14,10 +17,10 @@ public class TestPathMode extends AutoModeBase
     @Override
     protected void routine() throws AutoModeEndedException
     {
-        PathContainer testPath = new TestPath();
-        runAction(new ResetPoseFromPathAction(testPath));
-        runAction(new WaitAction(2)); // Give everything time to get reset
-        runAction(new DrivePathAction(testPath));
+        PathContainer path = new TestPath();
+        runAction(new ResetPoseFromPathAction(path));
+        runAction(new DrivePathAction(path));
+//        runAction(new TurnToHeadingAction(Rotation2d.fromDegrees(SmartDashboard.getNumber("turn_tar", 120))));
     }
 
 }

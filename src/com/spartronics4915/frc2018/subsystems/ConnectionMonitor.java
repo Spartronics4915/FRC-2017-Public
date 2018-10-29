@@ -3,6 +3,7 @@ package com.spartronics4915.frc2018.subsystems;
 import com.spartronics4915.frc2018.loops.Loop;
 import com.spartronics4915.frc2018.loops.Looper;
 import com.spartronics4915.lib.util.LatchedBoolean;
+import com.spartronics4915.lib.util.Logger;
 
 /**
  * Keeps track of the robot's connection to the driver station. If it
@@ -36,6 +37,7 @@ public class ConnectionMonitor extends Subsystem
         mJustReconnected = new LatchedBoolean();
         mJustDisconnected = new LatchedBoolean();
         mLED = LED.getInstance();
+        logInitialized(true);
     }
 
     @Override
@@ -61,8 +63,9 @@ public class ConnectionMonitor extends Subsystem
                     boolean has_connection = true;
                     if (timestamp - mLastPacketTime > kConnectionTimeoutSec)
                     {
-                        System.out.println("Connection lost or timed out.");
-                        mLED.setWantedState(LED.WantedState.BLINK);
+                        String msg = "ConnectionMonitor: connection lost or timed out.";
+                        Logger.warning(msg);
+                        mLED.warnDriver(msg);
                         has_connection = false;
                     }
 
@@ -103,6 +106,13 @@ public class ConnectionMonitor extends Subsystem
     public void zeroSensors()
     {
 
+    }
+    
+    @Override
+    public boolean checkSystem(String variant)
+    {
+        logNotice("checkSystem (unimplemented) -----------");
+        return true;
     }
 
     public synchronized void setLastPacketTime(double timestamp)

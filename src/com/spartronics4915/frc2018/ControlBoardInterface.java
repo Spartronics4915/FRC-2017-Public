@@ -13,10 +13,6 @@ public interface ControlBoardInterface
 
     boolean getQuickTurn();
 
-    boolean getLowGear();
+    boolean getHighGear();
 
-    boolean getExample();
-
-    // OPERATOR CONTROLS
-    boolean getBlinkLEDButton();
 }

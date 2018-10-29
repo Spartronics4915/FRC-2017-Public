@@ -2,14 +2,19 @@ package com.spartronics4915.frc2018.subsystems;
 
 import com.spartronics4915.frc2018.loops.Loop;
 import com.spartronics4915.frc2018.loops.Looper;
+import com.spartronics4915.lib.util.DriveSignal;
+import com.spartronics4915.lib.util.Logger;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The superstructure subsystem is the overarching superclass containing all
- * components of the superstructure: the
- * intake, hopper, feeder, shooter and LEDs. The superstructure subsystem also
- * contains some miscellaneous hardware that
+ * components of the superstructure: climber, harvester, and articulated
+ * grabber,
+ * and lifter.
+ * 
+ * The superstructure subsystem also contains some miscellaneous hardware that
  * is located in the superstructure but isn't part of any other subsystems like
  * the compressor, pressure sensor, and
  * hopper wall pistons.
@@ -38,31 +43,53 @@ public class Superstructure extends Subsystem
         return mInstance;
     }
 
-    private final LED mLED = LED.getInstance();
+    private LED mLED = null;
+    private Climber mClimber = null;
+    private Harvester mHarvester = null;
+    private ScissorLift mLifter = null;
 
     // Superstructure doesn't own the drive, but needs to access it
     private final Drive mDrive = Drive.getInstance();
 
-    // Intenal state of the system
+    // Internal state of the system
     public enum SystemState
     {
-        IDLE
+        IDLE,
+        RELEASING_SCISSOR, // Climb
+        CLIMBING,
+        DRIVE_CUBE, // turn to cube
     };
 
     // Desired function from user
     public enum WantedState
     {
-        IDLE
+        IDLE,
+        CLIMB,
+        VISION_ACQUIRE_CUBE, // drive to, and acquire the cube
     }
 
     private SystemState mSystemState = SystemState.IDLE;
     private WantedState mWantedState = WantedState.IDLE;
 
     // State change timestamps are currently unused, but I'm keeping them
-    // here because they're useful.
+    // here because they're potentially useful.
     private double mCurrentStateStartTime;
     private boolean mStateChanged;
 
+    private Timer mTimer = new Timer();
+
+    private final double kMatchDurationSeconds = 135;
+    private final double kEndgameDurationSeconds = 30;
+    private final double kFinishGrabAfterSeconds = 0.3;
+
+    private Superstructure()
+    {
+        mLED = LED.getInstance();
+        mClimber = Climber.getInstance();
+        mHarvester = Harvester.getInstance();
+        mLifter = ScissorLift.getInstance();
+    }
+    
     public boolean isDriveOnTarget()
     {
         return mDrive.isOnTarget() && mDrive.isAutoAiming();
@@ -97,24 +124,46 @@ public class Superstructure extends Subsystem
                 switch (mSystemState)
                 {
                     case IDLE:
-                        newState = handleIdle(mStateChanged);
+                        switch(mWantedState)
+                        {
+                            case CLIMB:
+                                newState = SystemState.RELEASING_SCISSOR;
+                                break;
+                            default: // either idle or unimplemented
+                                break;
+                        }
+                        break;
+                    case RELEASING_SCISSOR: // Climb
+                        if (mLifter.getWantedState() != ScissorLift.WantedState.OFF)
+                            mLifter.setWantedState(ScissorLift.WantedState.OFF);
+                        if (mWantedState == WantedState.CLIMB)
+                        {
+                            if (mLifter.atTarget())
+                                newState = SystemState.CLIMBING;
+                        }
+                        else
+                            newState = SystemState.IDLE;
+                        break;
+                    case CLIMBING:
+                        if (mClimber.getWantedState() != Climber.WantedState.CLIMB)
+                            mClimber.setWantedState(Climber.WantedState.CLIMB);
+                        else
+                        {
+                            mWantedState = WantedState.IDLE;
+                            newState = SystemState.IDLE; // Done
+                        }
                         break;
                     default:
-                        newState = SystemState.IDLE;
+                        newState = defaultStateTransfer();
                 }
-
-                if (newState != mSystemState)
+                if(mSystemState != newState)
                 {
-                    System.out.println("Superstructure state " + mSystemState + " to " + newState + " Timestamp: "
-                            + Timer.getFPGATimestamp());
-                    mSystemState = newState;
-                    mCurrentStateStartTime = timestamp;
-                    mStateChanged = true;
+                    if(newState == SystemState.IDLE)
+                    {
+                        // need to reset subsystems to an idle?
+                    }
                 }
-                else
-                {
-                    mStateChanged = false;
-                }
+                mSystemState = newState;
             }
         }
 
@@ -125,31 +174,48 @@ public class Superstructure extends Subsystem
         }
     };
 
-    private SystemState handleIdle(boolean stateChanged)
+    private SystemState defaultStateTransfer()
     {
-        if (stateChanged)
-        {
-            stop();
-            mLED.setWantedState(LED.WantedState.OFF);
-        }
-
+        SystemState newState = mSystemState;
         switch (mWantedState)
         {
-            // Add states you want to be able to switch to from IDLE
+            case IDLE:
+                newState = SystemState.IDLE;
+                break;
+            case CLIMB:
+                //                if (DriverStation.getInstance().getMatchTime() < kMatchDurationSeconds - kEndgameDurationSeconds) // Don't extend the scissor if we're not in the endgame
+                //                    return; This is commented out to make testing easier. Re-add it once this is verified.
+                newState = SystemState.RELEASING_SCISSOR; // First state
+                break;
+            case VISION_ACQUIRE_CUBE:
+                // Begin the spin
+                newState = SystemState.DRIVE_CUBE;
             default:
-                return SystemState.IDLE;
+                newState = SystemState.IDLE;
+                break;
         }
+        return newState;
     }
 
     public synchronized void setWantedState(WantedState wantedState)
     {
+        logNotice("Wanted state to " + wantedState.toString());
         mWantedState = wantedState;
     }
 
+    /**
+     * This is a bit like the atTarget methods of many other subsystem.
+     * It's called something different because Superstructure is fundamentally
+     * different from other subsystems.
+     */
+    public synchronized boolean isIdling()
+    {
+        return mSystemState == SystemState.IDLE;
+    }
+    
     @Override
     public void outputToSmartDashboard()
     {
-        // If we have any miscellaneous hardware that we put into this subsystem, it goes here
     }
 
     @Override
@@ -168,5 +234,12 @@ public class Superstructure extends Subsystem
     public void registerEnabledLoops(Looper enabledLooper)
     {
         enabledLooper.register(mLoop);
+    }
+
+    @Override
+    public boolean checkSystem(String variant)
+    {
+        logNotice("checkSystem not implemented");
+        return false;
     }
 }
