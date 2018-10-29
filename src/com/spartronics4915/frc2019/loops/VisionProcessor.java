@@ -1,9 +1,9 @@
-package com.spartronics4915.frc2018.loops;
+package com.spartronics4915.frc2019.loops;
 
-import com.spartronics4915.frc2018.GoalTracker;
-import com.spartronics4915.frc2018.RobotState;
-import com.spartronics4915.frc2018.vision.VisionUpdate;
-import com.spartronics4915.frc2018.vision.VisionUpdateReceiver;
+import com.spartronics4915.frc2019.GoalTracker;
+import com.spartronics4915.frc2019.RobotState;
+import com.spartronics4915.frc2019.vision.VisionUpdate;
+import com.spartronics4915.frc2019.vision.VisionUpdateReceiver;
 
 /**
  * This function adds vision updates (from the Nexus smartphone) to a list in

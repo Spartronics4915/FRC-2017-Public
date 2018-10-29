@@ -1,13 +1,13 @@
-package com.spartronics4915.frc2018.subsystems;
+package com.spartronics4915.frc2019.subsystems;
 
 import java.util.Optional;
 
-import com.spartronics4915.frc2018.Constants;
-import com.spartronics4915.frc2018.Kinematics;
-import com.spartronics4915.frc2018.RobotState;
-import com.spartronics4915.frc2018.ShooterAimingParameters;
-import com.spartronics4915.frc2018.loops.Loop;
-import com.spartronics4915.frc2018.loops.Looper;
+import com.spartronics4915.frc2019.Constants;
+import com.spartronics4915.frc2019.Kinematics;
+import com.spartronics4915.frc2019.RobotState;
+import com.spartronics4915.frc2019.ShooterAimingParameters;
+import com.spartronics4915.frc2019.loops.Loop;
+import com.spartronics4915.frc2019.loops.Looper;
 import com.spartronics4915.lib.util.DriveSignal;
 import com.spartronics4915.lib.util.ReflectingCSVWriter;
 import com.spartronics4915.lib.util.Util;

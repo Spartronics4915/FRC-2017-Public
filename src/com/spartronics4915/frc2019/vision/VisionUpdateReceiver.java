@@ -1,4 +1,4 @@
-package com.spartronics4915.frc2018.vision;
+package com.spartronics4915.frc2019.vision;
 
 /**
  * A basic interface for classes that get VisionUpdates. Classes that implement

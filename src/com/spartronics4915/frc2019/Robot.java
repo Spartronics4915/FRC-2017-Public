@@ -1,4 +1,4 @@
-package com.spartronics4915.frc2018;
+package com.spartronics4915.frc2019;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,18 +8,18 @@ import java.util.Arrays;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import com.spartronics4915.frc2018.auto.AutoModeExecuter;
-import com.spartronics4915.frc2018.loops.Looper;
-import com.spartronics4915.frc2018.loops.RobotStateEstimator;
-import com.spartronics4915.frc2018.loops.VisionProcessor;
-import com.spartronics4915.frc2018.paths.profiles.PathAdapter;
-import com.spartronics4915.frc2018.subsystems.Climber;
-import com.spartronics4915.frc2018.subsystems.ConnectionMonitor;
-import com.spartronics4915.frc2018.subsystems.Drive;
-import com.spartronics4915.frc2018.subsystems.Harvester;
-import com.spartronics4915.frc2018.subsystems.LED;
-import com.spartronics4915.frc2018.subsystems.ScissorLift;
-import com.spartronics4915.frc2018.subsystems.Superstructure;
+import com.spartronics4915.frc2019.auto.AutoModeExecuter;
+import com.spartronics4915.frc2019.loops.Looper;
+import com.spartronics4915.frc2019.loops.RobotStateEstimator;
+import com.spartronics4915.frc2019.loops.VisionProcessor;
+import com.spartronics4915.frc2019.paths.profiles.PathAdapter;
+import com.spartronics4915.frc2019.subsystems.Climber;
+import com.spartronics4915.frc2019.subsystems.ConnectionMonitor;
+import com.spartronics4915.frc2019.subsystems.Drive;
+import com.spartronics4915.frc2019.subsystems.Harvester;
+import com.spartronics4915.frc2019.subsystems.LED;
+import com.spartronics4915.frc2019.subsystems.ScissorLift;
+import com.spartronics4915.frc2019.subsystems.Superstructure;
 import com.spartronics4915.lib.util.CANProbe;
 import com.spartronics4915.lib.util.CheesyDriveHelper;
 import com.spartronics4915.lib.util.Logger;

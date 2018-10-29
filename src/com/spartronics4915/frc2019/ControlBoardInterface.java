@@ -1,4 +1,4 @@
-package com.spartronics4915.frc2018;
+package com.spartronics4915.frc2019;
 
 /**
  * A basic framework for robot controls that other controller classes implement
@@ -13,6 +13,6 @@ public interface ControlBoardInterface
 
     boolean getQuickTurn();
 
-    boolean getHighGear();
+    boolean getSlowDrive();
 
 }

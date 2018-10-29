@@ -2,8 +2,8 @@ package com.spartronics4915.lib.util;
 
 import java.util.List;
 
-import com.spartronics4915.frc2018.paths.PathContainer;
-import com.spartronics4915.frc2018.paths.PathBuilder.Waypoint;
+import com.spartronics4915.frc2019.paths.PathContainer;
+import com.spartronics4915.frc2019.paths.PathBuilder.Waypoint;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;

@@ -237,12 +237,12 @@
 ```
  NOTICE  disabled init
  Stopping loops
- Stopping com.spartronics4915.frc2018.subsystems.Superstructure$1@75cab9
- Stopping com.spartronics4915.frc2018.subsystems.ConnectionMonitor$1@f7fe8e
- Stopping com.spartronics4915.frc2018.subsystems.LED$1@179caec
- Stopping com.spartronics4915.frc2018.subsystems.Testbed$1@1117f44
- Stopping com.spartronics4915.frc2018.loops.VisionProcessor@1d3411d
- Stopping com.spartronics4915.frc2018.loops.RobotStateEstimator@71cca7
+ Stopping com.spartronics4915.frc2019.subsystems.Superstructure$1@75cab9
+ Stopping com.spartronics4915.frc2019.subsystems.ConnectionMonitor$1@f7fe8e
+ Stopping com.spartronics4915.frc2019.subsystems.LED$1@179caec
+ Stopping com.spartronics4915.frc2019.subsystems.Testbed$1@1117f44
+ Stopping com.spartronics4915.frc2019.loops.VisionProcessor@1d3411d
+ Stopping com.spartronics4915.frc2019.loops.RobotStateEstimator@71cca7
 ```
 
 #### what is a “wantedState” as specified in Robot::teleopPeriodic?
@@ -601,9 +601,9 @@ double focal_length_pix = (size.width * 0.5) / tan(horizontalAngleView * 0.5 * P
 ##### How are these paths brought into the robot code?
 > The results of cheesy_path are included in robot code by adding the
 > custom class java file directly to the repository.  By convention, custom
-> PathContainers are placed in a game-specific area: `frc2018/paths`.  
+> PathContainers are placed in a game-specific area: `frc2019/paths`.  
 > Next an instance of this class can be created as a component of an
-> autonomous mode.  The file, `frc2018/auto/modes/TestPathMode` is an
+> autonomous mode.  The file, `frc2019/auto/modes/TestPathMode` is an
 > example that instantiates the class TestPath and instantiates an instance
 > of `DrivePathAction`, parameterized by the TestPath instance.
 

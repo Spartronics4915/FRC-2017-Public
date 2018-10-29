@@ -1,9 +1,9 @@
-package com.spartronics4915.frc2018.auto.modes;
+package com.spartronics4915.frc2019.auto.modes;
 
-import com.spartronics4915.frc2018.auto.AutoModeBase;
-import com.spartronics4915.frc2018.auto.AutoModeEndedException;
-import com.spartronics4915.frc2018.auto.actions.*;
-import com.spartronics4915.frc2018.subsystems.Drive;
+import com.spartronics4915.frc2019.auto.AutoModeBase;
+import com.spartronics4915.frc2019.auto.AutoModeEndedException;
+import com.spartronics4915.frc2019.auto.actions.*;
+import com.spartronics4915.frc2019.subsystems.Drive;
 import com.spartronics4915.lib.util.DriveSignal;
 import com.spartronics4915.lib.util.Logger;
 

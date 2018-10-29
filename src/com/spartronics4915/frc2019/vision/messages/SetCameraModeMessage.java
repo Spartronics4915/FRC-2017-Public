@@ -1,4 +1,4 @@
-package com.spartronics4915.frc2018.vision.messages;
+package com.spartronics4915.frc2019.vision.messages;
 
 /**
  * A Message that contains and can set the state of the camera and intake

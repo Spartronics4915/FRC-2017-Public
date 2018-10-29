@@ -1,9 +1,9 @@
-package com.spartronics4915.frc2018;
+package com.spartronics4915.frc2019;
 
 import java.util.List;
 
-import com.spartronics4915.frc2018.loops.Looper;
-import com.spartronics4915.frc2018.subsystems.Subsystem;
+import com.spartronics4915.frc2019.loops.Looper;
+import com.spartronics4915.frc2019.subsystems.Subsystem;
 
 /**
  * Used to reset, start, stop, and update all subsystems at once

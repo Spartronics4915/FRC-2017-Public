@@ -1,8 +1,8 @@
-package com.spartronics4915.frc2018.paths;
+package com.spartronics4915.frc2019.paths;
 
 import java.util.List;
 
-import com.spartronics4915.frc2018.auto.actions.WaitForPathMarkerAction;
+import com.spartronics4915.frc2019.auto.actions.WaitForPathMarkerAction;
 import com.spartronics4915.lib.util.Logger;
 import com.spartronics4915.lib.util.control.Path;
 import com.spartronics4915.lib.util.control.PathSegment;

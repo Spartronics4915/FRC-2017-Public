@@ -1,9 +1,9 @@
-package com.spartronics4915.frc2018.paths;
+package com.spartronics4915.frc2019.paths;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.spartronics4915.frc2018.paths.PathBuilder.Waypoint;
+import com.spartronics4915.frc2019.paths.PathBuilder.Waypoint;
 import com.spartronics4915.lib.util.control.Path;
 import com.spartronics4915.lib.util.math.RigidTransform2d;
 import com.spartronics4915.lib.util.math.Rotation2d;

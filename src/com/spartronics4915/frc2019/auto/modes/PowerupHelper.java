@@ -1,15 +1,15 @@
-package com.spartronics4915.frc2018.auto.modes;
+package com.spartronics4915.frc2019.auto.modes;
 
-import com.spartronics4915.frc2018.auto.actions.Action;
-import com.spartronics4915.frc2018.auto.actions.ActuateHarvesterAction;
-import com.spartronics4915.frc2018.auto.actions.ActuateScissorLiftAction;
-import com.spartronics4915.frc2018.auto.actions.DrivePathAction;
-import com.spartronics4915.frc2018.auto.actions.ParallelAction;
-import com.spartronics4915.frc2018.auto.actions.ParallelSingleWaitAction;
-import com.spartronics4915.frc2018.auto.actions.WaitAction;
-import com.spartronics4915.frc2018.paths.PathContainer;
-import com.spartronics4915.frc2018.subsystems.Harvester;
-import com.spartronics4915.frc2018.subsystems.ScissorLift;
+import com.spartronics4915.frc2019.auto.actions.Action;
+import com.spartronics4915.frc2019.auto.actions.ActuateHarvesterAction;
+import com.spartronics4915.frc2019.auto.actions.ActuateScissorLiftAction;
+import com.spartronics4915.frc2019.auto.actions.DrivePathAction;
+import com.spartronics4915.frc2019.auto.actions.ParallelAction;
+import com.spartronics4915.frc2019.auto.actions.ParallelSingleWaitAction;
+import com.spartronics4915.frc2019.auto.actions.WaitAction;
+import com.spartronics4915.frc2019.paths.PathContainer;
+import com.spartronics4915.frc2019.subsystems.Harvester;
+import com.spartronics4915.frc2019.subsystems.ScissorLift;
 
 public class PowerupHelper
 {

@@ -1,4 +1,4 @@
-package com.spartronics4915.frc2018.auto.actions;
+package com.spartronics4915.frc2019.auto.actions;
 
 /**
  * Action Interface, an interface that describes an iterative action. It is run
@@ -6,7 +6,7 @@ package com.spartronics4915.frc2018.auto.actions;
  * method runAction in AutoModeBase (or more commonly in autonomous modes that
  * extend AutoModeBase)
  *
- * @see com.spartronics4915.frc2018.auto.AutoModeBase#runAction
+ * @see com.spartronics4915.frc2019.auto.AutoModeBase#runAction
  */
 public interface Action
 {

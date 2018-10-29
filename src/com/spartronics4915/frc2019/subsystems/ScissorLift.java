@@ -1,9 +1,9 @@
-package com.spartronics4915.frc2018.subsystems;
+package com.spartronics4915.frc2019.subsystems;
 
-import com.spartronics4915.frc2018.Constants;
-import com.spartronics4915.frc2018.loops.Loop;
-import com.spartronics4915.frc2018.loops.Looper;
-import com.spartronics4915.frc2018.subsystems.LED.SystemState;
+import com.spartronics4915.frc2019.Constants;
+import com.spartronics4915.frc2019.loops.Loop;
+import com.spartronics4915.frc2019.loops.Looper;
+import com.spartronics4915.frc2019.subsystems.LED.SystemState;
 import com.spartronics4915.lib.util.Logger;
 import com.spartronics4915.lib.util.Util;
 import com.spartronics4915.lib.util.drivers.LazySolenoid;

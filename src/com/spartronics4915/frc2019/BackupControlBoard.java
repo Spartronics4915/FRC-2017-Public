@@ -1,7 +1,7 @@
-package com.spartronics4915.frc2018;
+package com.spartronics4915.frc2019;
 
-import com.spartronics4915.frc2018.ControlBoardInterface.Buttons;
-import com.spartronics4915.frc2018.ControlBoardInterface.Sticks;
+import com.spartronics4915.frc2019.ControlBoardInterface.Buttons;
+import com.spartronics4915.frc2019.ControlBoardInterface.Sticks;
 import com.spartronics4915.lib.util.Logger;
 
 import edu.wpi.first.wpilibj.Joystick;

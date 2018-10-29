@@ -1,11 +1,11 @@
-package com.spartronics4915.frc2018;
+package com.spartronics4915.frc2019;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import com.spartronics4915.frc2018.auto.AutoModeBase;
-import com.spartronics4915.frc2018.auto.modes.*;
+import com.spartronics4915.frc2019.auto.AutoModeBase;
+import com.spartronics4915.frc2019.auto.modes.*;
 import com.spartronics4915.lib.util.Logger;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

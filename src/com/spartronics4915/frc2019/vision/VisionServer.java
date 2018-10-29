@@ -1,4 +1,4 @@
-package com.spartronics4915.frc2018.vision;
+package com.spartronics4915.frc2019.vision;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,10 +8,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.spartronics4915.frc2018.Constants;
-import com.spartronics4915.frc2018.vision.messages.HeartbeatMessage;
-import com.spartronics4915.frc2018.vision.messages.OffWireMessage;
-import com.spartronics4915.frc2018.vision.messages.VisionMessage;
+import com.spartronics4915.frc2019.Constants;
+import com.spartronics4915.frc2019.vision.messages.HeartbeatMessage;
+import com.spartronics4915.frc2019.vision.messages.OffWireMessage;
+import com.spartronics4915.frc2019.vision.messages.VisionMessage;
 import com.spartronics4915.lib.util.CrashTrackingRunnable;
 
 import edu.wpi.first.wpilibj.Timer;
