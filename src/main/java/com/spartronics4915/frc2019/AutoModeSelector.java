@@ -37,24 +37,14 @@ public class AutoModeSelector
             "All: Cross Baseline",
             () -> new CrossBaselineMode());
     private static final AutoModeCreator[] mAllModes = {
-            new AutoModeCreator("A: Place at Scale", () -> new PlaceScaleFromAMode()),
-            new AutoModeCreator("C: Place at Scale", () -> new PlaceScaleFromCMode()),
-            new AutoModeCreator("A: Place at Switch", () -> new PlaceSwitchFromAMode()),
-            new AutoModeCreator("B: Place at Switch", () -> new PlaceSwitchFromBMode()),
-            new AutoModeCreator("C: Place at Switch", () -> new PlaceSwitchFromCMode()),
-            new AutoModeCreator("A: Place at Optimized Position", () -> new PlaceOptimizedFromAMode()),
-            new AutoModeCreator("C: Place at Optimized Position", () -> new PlaceOptimizedFromCMode()),
             new AutoModeCreator("All: Cross Baseline", () -> new CrossBaselineMode()),
             new AutoModeCreator("Do nothing", () -> new StandStillMode()),
-            new AutoModeCreator("Other: Prepare Robot", () -> new PrepareRobotMode()),
             new AutoModeCreator("Test: Path", () -> new TestPathMode()),
             new AutoModeCreator("Test: Velocity PID Tuning", () -> new TestDrivePIDMode("velocity")),
             new AutoModeCreator("Test: Position PID Tuning", () -> new TestDrivePIDMode("position")),
             new AutoModeCreator("Test: Stress Motor Mode", () -> new StressMotorsMode()),
-            new AutoModeCreator("Test: Turn to Cube Mode", () -> new TurnToCubeMode()),
-            new AutoModeCreator("Test: Find the Cube Mode", () -> new FindCube())
 
-            // e.g. new AutoModeCreator("Boiler Gear then 10 Ball Shoot Red", () -> new BoilerGearThenShootModeRed()),
+            // e.g. new AutoModeCreator(C: Drive To Hopper", () -> new DriveToHopperMode()),
     };
 
     public static void initAutoModeSelector()

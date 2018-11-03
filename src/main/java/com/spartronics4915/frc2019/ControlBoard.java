@@ -1,9 +1,6 @@
 package com.spartronics4915.frc2019;
 
-import com.spartronics4915.lib.util.Logger;
-
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Contains the button mappings for the competition control board. Like the

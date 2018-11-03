@@ -21,7 +21,13 @@ deploy {
     }
 }
 
+repositories {
+    mavenCentral() // Needed for json-simple, and jama
+}
+
 dependencies {
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    compile group: 'gov.nist.math', name: 'jama', version: '1.0.3' // Linear algebra
     compile wpilib()
     compile ctre()
 }

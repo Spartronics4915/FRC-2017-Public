@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.spartronics4915.frc2019.Constants;
 import com.spartronics4915.frc2019.paths.PathBuilder.Waypoint;
-import com.spartronics4915.lib.util.Logger;
 import com.spartronics4915.lib.util.math.RigidTransform2d;
 import com.spartronics4915.lib.util.math.Translation2d;
 

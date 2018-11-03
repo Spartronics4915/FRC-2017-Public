@@ -2,10 +2,7 @@ package com.spartronics4915.frc2019.subsystems;
 
 import com.spartronics4915.frc2019.loops.Loop;
 import com.spartronics4915.frc2019.loops.Looper;
-import com.spartronics4915.lib.util.DriveSignal;
-import com.spartronics4915.lib.util.Logger;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -44,9 +41,6 @@ public class Superstructure extends Subsystem
     }
 
     private LED mLED = null;
-    private Climber mClimber = null;
-    private Harvester mHarvester = null;
-    private ScissorLift mLifter = null;
 
     // Superstructure doesn't own the drive, but needs to access it
     private final Drive mDrive = Drive.getInstance();
@@ -55,17 +49,12 @@ public class Superstructure extends Subsystem
     public enum SystemState
     {
         IDLE,
-        RELEASING_SCISSOR, // Climb
-        CLIMBING,
-        DRIVE_CUBE, // turn to cube
     };
 
     // Desired function from user
     public enum WantedState
     {
         IDLE,
-        CLIMB,
-        VISION_ACQUIRE_CUBE, // drive to, and acquire the cube
     }
 
     private SystemState mSystemState = SystemState.IDLE;
@@ -78,16 +67,9 @@ public class Superstructure extends Subsystem
 
     private Timer mTimer = new Timer();
 
-    private final double kMatchDurationSeconds = 135;
-    private final double kEndgameDurationSeconds = 30;
-    private final double kFinishGrabAfterSeconds = 0.3;
-
     private Superstructure()
     {
         mLED = LED.getInstance();
-        mClimber = Climber.getInstance();
-        mHarvester = Harvester.getInstance();
-        mLifter = ScissorLift.getInstance();
     }
     
     public boolean isDriveOnTarget()
@@ -126,31 +108,8 @@ public class Superstructure extends Subsystem
                     case IDLE:
                         switch(mWantedState)
                         {
-                            case CLIMB:
-                                newState = SystemState.RELEASING_SCISSOR;
-                                break;
                             default: // either idle or unimplemented
                                 break;
-                        }
-                        break;
-                    case RELEASING_SCISSOR: // Climb
-                        if (mLifter.getWantedState() != ScissorLift.WantedState.OFF)
-                            mLifter.setWantedState(ScissorLift.WantedState.OFF);
-                        if (mWantedState == WantedState.CLIMB)
-                        {
-                            if (mLifter.atTarget())
-                                newState = SystemState.CLIMBING;
-                        }
-                        else
-                            newState = SystemState.IDLE;
-                        break;
-                    case CLIMBING:
-                        if (mClimber.getWantedState() != Climber.WantedState.CLIMB)
-                            mClimber.setWantedState(Climber.WantedState.CLIMB);
-                        else
-                        {
-                            mWantedState = WantedState.IDLE;
-                            newState = SystemState.IDLE; // Done
                         }
                         break;
                     default:
@@ -182,14 +141,6 @@ public class Superstructure extends Subsystem
             case IDLE:
                 newState = SystemState.IDLE;
                 break;
-            case CLIMB:
-                //                if (DriverStation.getInstance().getMatchTime() < kMatchDurationSeconds - kEndgameDurationSeconds) // Don't extend the scissor if we're not in the endgame
-                //                    return; This is commented out to make testing easier. Re-add it once this is verified.
-                newState = SystemState.RELEASING_SCISSOR; // First state
-                break;
-            case VISION_ACQUIRE_CUBE:
-                // Begin the spin
-                newState = SystemState.DRIVE_CUBE;
             default:
                 newState = SystemState.IDLE;
                 break;

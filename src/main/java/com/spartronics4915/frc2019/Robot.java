@@ -13,12 +13,9 @@ import com.spartronics4915.frc2019.loops.Looper;
 import com.spartronics4915.frc2019.loops.RobotStateEstimator;
 import com.spartronics4915.frc2019.loops.VisionProcessor;
 import com.spartronics4915.frc2019.paths.profiles.PathAdapter;
-import com.spartronics4915.frc2019.subsystems.Climber;
 import com.spartronics4915.frc2019.subsystems.ConnectionMonitor;
 import com.spartronics4915.frc2019.subsystems.Drive;
-import com.spartronics4915.frc2019.subsystems.Harvester;
 import com.spartronics4915.frc2019.subsystems.LED;
-import com.spartronics4915.frc2019.subsystems.ScissorLift;
 import com.spartronics4915.frc2019.subsystems.Superstructure;
 import com.spartronics4915.lib.util.CANProbe;
 import com.spartronics4915.lib.util.CheesyDriveHelper;
@@ -60,9 +57,6 @@ public class Robot extends IterativeRobot
     private Drive mDrive = null;
     private Superstructure mSuperstructure = null;
     private LED mLED = null;
-    private Climber mClimber = null;
-    private Harvester mHarvester = null;
-    private ScissorLift mLifter = null;
     private RobotState mRobotState = null;
     private AutoModeExecuter mAutoModeExecuter = null;
     private ConnectionMonitor mConnectionMonitor = null;
@@ -140,9 +134,6 @@ public class Robot extends IterativeRobot
             // Subsystem instances
             mDrive = Drive.getInstance();
             mLED = LED.getInstance();
-            mClimber = Climber.getInstance();
-            mHarvester = Harvester.getInstance();
-            mLifter = ScissorLift.getInstance();
             mSuperstructure = Superstructure.getInstance();
 
             mRobotState = RobotState.getInstance();
@@ -150,7 +141,7 @@ public class Robot extends IterativeRobot
             mConnectionMonitor = ConnectionMonitor.getInstance();
             mSubsystemManager = new SubsystemManager(
                     Arrays.asList(mDrive, mSuperstructure,
-                            mConnectionMonitor, mLED, mClimber, mHarvester, mLifter));
+                            mConnectionMonitor, mLED));
 
             // Initialize other helper objects
             mCheesyDriveHelper = new CheesyDriveHelper();
@@ -164,7 +155,7 @@ public class Robot extends IterativeRobot
 
             AutoModeSelector.initAutoModeSelector();
             SmartDashboard.putString(kRobotTestModeOptions,
-                    "None,ArticulatedGrabber,Climber,Drive,Harvester,LED,ScissorLift,All");
+                    "None,Drive,LED,All");
             SmartDashboard.putString(kRobotTestMode, "None");
             SmartDashboard.putString(kRobotTestVariant, "");
 
@@ -215,8 +206,7 @@ public class Robot extends IterativeRobot
             mAutoModeExecuter = null;
 
             mEnabledLooper.start();
-            mHarvester.setWantedState(Harvester.WantedState.GRAB); // Make sure the solenoids are doing what we want
-            
+
             mAutoModeExecuter = new AutoModeExecuter();
             mAutoModeExecuter.setAutoMode(AutoModeSelector.getSelectedAutoMode());
             mAutoModeExecuter.start();
@@ -255,7 +245,6 @@ public class Robot extends IterativeRobot
 
             mEnabledLooper.start(); // starts subsystem loopers.
             mDrive.setOpenLoop(DriveSignal.NEUTRAL);
-            mHarvester.setWantedState(Harvester.WantedState.GRAB); // Make sure the solenoids are doing what we want
         }
         catch (Throwable t)
         {
@@ -360,24 +349,9 @@ public class Robot extends IterativeRobot
             success &= mDrive.checkSystem(testVariant);
         }
 
-        if (testMode.equals("Climber") || testMode.equals("All"))
-        {
-            success &= mClimber.checkSystem(testVariant);
-        }
-
-        if (testMode.equals("Harvester") || testMode.equals("All"))
-        {
-            success &= mHarvester.checkSystem(testVariant);
-        }
-
         if (testMode.equals("LED") || testMode.equals("All"))
         {
             success &= mLED.checkSystem(testVariant);
-        }
-
-        if (testMode.equals("ScissorLift") || testMode.equals("All"))
-        {
-            success &= mLifter.checkSystem(testVariant);
         }
 
         if (!success)

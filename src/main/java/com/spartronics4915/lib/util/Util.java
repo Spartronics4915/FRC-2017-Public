@@ -5,9 +5,7 @@ import java.util.List;
 import com.spartronics4915.frc2019.paths.PathContainer;
 import com.spartronics4915.frc2019.paths.PathBuilder.Waypoint;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
