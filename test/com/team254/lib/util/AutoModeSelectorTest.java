@@ -13,8 +13,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.spartronics4915.frc2018.AutoModeSelector;
-import com.spartronics4915.frc2018.auto.modes.StandStillMode;
+import com.spartronics4915.frc2019.AutoModeSelector;
+import com.spartronics4915.frc2019.auto.modes.StandStillMode;
 
 import java.util.ArrayList;
 

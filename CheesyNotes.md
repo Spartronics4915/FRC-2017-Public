@@ -29,47 +29,47 @@ The code is divided into several packages, each responsible for a different aspe
 	[Cheezdroid](vision_app), an android-based vision processing system, is used for image processing and target detection.  The app runs on a Nexus 5 phone.  Since all processing is done on the Nexus 5 itself, the app is able to maintain a smooth 30 FPS output for maximum performance.
 
 ## Package Functions
-- com.spartronics4915.frc2018
+- com.spartronics4915.frc2019
 
 	Contains the robot's central functions and holds a file with all numerical constants used throughout the code. For example, the Robot member class controls all routines depending on the robot state.
 
-- com.spartronics4915.frc2018.auto
+- com.spartronics4915.frc2019.auto
 
 	Handles the excecution of autonomous routines.  Also contains the auto actions and auto modes packages..
 	
-- com.spartronics4915.frc2018.auto.actions
+- com.spartronics4915.frc2019.auto.actions
 
 	Contains all actions used during the autonomous period, which all share a common interface, Action (also in this package). Examples include deploying the intake, driving a path, or scoring a gear. Routines interact with the Subsystems, which interact with the hardware.
 	
-- com.spartronics4915.frc2018.auto.modes
+- com.spartronics4915.frc2019.auto.modes
 	
 	Contains all autonomous modes. Autonomous modes consist of a list of autonomous actions excecuted in a certain order.
 	
-- com.spartronics4915.frc2018.loops
+- com.spartronics4915.frc2019.loops
 
 	Loops are routines that run periodically on the robot, such as calculating robot pose, processing vision feedback, or updating subsystems. All Loops implement the Loop interface and are handled (started, stopped, added) by the Looper class, which runs att 200 Hz.
 	The Robot class has one main Looper, mEnabledLooper, that runs all loops when the robot is enabled.
 	
-- com.spartronics4915.frc2018.paths
+- com.spartronics4915.frc2019.paths
 
 	Contains all paths that the robot drives during autonomous mode.  Each path is made up of a list of Waypoints.  The PathBuilder class, which is also included in this package, transforms these waypoints into a series of arcs and line segments.
 	
-- com.spartronics4915.frc2018.paths.profiles
+- com.spartronics4915.frc2019.paths.profiles
 
 	Contains a set of field and robot profiles.  Field profiles contain field measurements that are read by the PathAdapter class, which then builds a set of paths to match a specific field's measurements.  Robot profiles contain robot driving error measurements.  Due to the simplified nature of our kinematics model, the robot often calculates that it is in a different position than it actually is.  Robot profiles help the robot compensate for this error between actual position and calculated position.
 	
-- com.spartronics4915.frc2018.subsystems
+- com.spartronics4915.frc2019.subsystems
 	
 	Subsystems are consolidated into one central class per subsystem, all of which implement the Subsystem abstract class. Each Subsystem uses state machines for control.
 	Each Subsystem is also a singleton, meaning that there is only one instance of each Subsystem class. To modify a subsystem, one would get the instance of the subsystem and change its desired state. The Subsystem class will work on setting the desired state.
 	
-- com.spartronics4915.frc2018.vision
+- com.spartronics4915.frc2019.vision
 
 	Handles the Android vision tracking system. This includes handling all ADB (Android Debug Bridge) communications with the phone and creating VisionUpdate data with the data from the phone.
 	VisionUpdates consist of TargetInfo objects (the target's coordinates in 3D space), a timestamp, and a "valid" value (if the update is valid). This represents the target data from each frame processed by the phone.
 	The VisionServer class unifies the vision system. Like the Subsystems, there is only one instance of the VisionServer.
 
-- com.spartronics4915.frc2018.vision.messages
+- com.spartronics4915.frc2019.vision.messages
 
 	Contains messages used by the vision system: a heartbeat signal that's regularly sent out and a "camera mode" message that contains information about the camera's state.
 	All Messages implement the VisionMessage abstract class.
