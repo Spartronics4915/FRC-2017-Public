@@ -1,6 +1,7 @@
-# 2018-POWERUP [![Build Status](https://travis-ci.com/Spartronics4915/2018-POWERUP.svg?token=fyEWjwiNdUZ8u7W5snBy&branch=master)](https://travis-ci.com/Spartronics4915/2018-POWERUP)
+# Spartronics-254Base
 
-Welcome to the github for Spartronics code for the FRC 2018-POWERUP game.
+Contains the foundational team codebase in preparation for the 2019
+season.
 
 ### Helpful Links
 
@@ -17,10 +18,10 @@ Welcome to the github for Spartronics code for the FRC 2018-POWERUP game.
 [Spartronics Intro Slides](https://docs.google.com/presentation/d/1ZiMBC9y3xrwFk1akdaiV_BMLLS6EyY6BSfiTRQo1KlM/edit#slide=id.g190898ba99_1_437)
 
 ## Code Ancestry/Acknowledgements
-This is a derivative of team 254's 2017 codebase, modified to better match our
-team's hardware, vision, programming and electronics conventions. We've also
-ported it to the 2018 WPI and CTRE interfaces.  Code can be built via
-command-line ant or your favorite Java IDE (Eclipse, IntelliJ, ...).
+This is a derivative of team 254's 2017 codebase (with some 2018 updates), 
+modified to better match our team's hardware, vision, programming and 
+electronics conventions. We've also ported it to the 2018 WPI and 
+CTRE interfaces.  Code can be built via command-line gradle or via VSCode.
 
 Modifications include:
 * refactor into our namespaces
