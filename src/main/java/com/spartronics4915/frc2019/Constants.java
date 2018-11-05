@@ -128,6 +128,14 @@ public class Constants extends ConstantsBase
     //                          ^ ^ Default cover, Default base
     public static final int kEncoderCodesPerRev = 360;
 
+    // Turret
+    // FIXME: Need to figure out the correct ID
+    public static final int kTurretMotorId = 10;
+    // We're using the CTRE Mag encoders: https://content.vexrobotics.com/vexpro/pdf/Magnetic-Encoder-User's-Guide-01282016.pdf
+    public static final int kTurretEncoderCodesPerRev = 955733; // 4096 PPR * 70 Gearbox Reduction * 10 / 3 Belt reduction
+    public static final Translation2d kTurretTargetFieldPosition = new Translation2d(0, 0);
+
+
     // Path following constants -----------------------------------
     public static final double kMinLookAhead = 12.0; // inches
     public static final double kMaxLookAhead = 24.0; // inches

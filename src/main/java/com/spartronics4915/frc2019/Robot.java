@@ -18,6 +18,7 @@ import com.spartronics4915.frc2019.subsystems.ConnectionMonitor;
 import com.spartronics4915.frc2019.subsystems.Drive;
 import com.spartronics4915.frc2019.subsystems.LED;
 import com.spartronics4915.frc2019.subsystems.Superstructure;
+import com.spartronics4915.frc2019.subsystems.Turret;
 import com.spartronics4915.lib.util.CANProbe;
 import com.spartronics4915.lib.util.CheesyDriveHelper;
 import com.spartronics4915.lib.util.Logger;
@@ -58,6 +59,7 @@ public class Robot extends IterativeRobot
     private Drive mDrive = null;
     private Superstructure mSuperstructure = null;
     private LED mLED = null;
+    private Turret mTurret = null;
     private RobotState mRobotState = null;
     private AutoModeExecuter mAutoModeExecuter = null;
     private ConnectionMonitor mConnectionMonitor = null;
@@ -142,7 +144,7 @@ public class Robot extends IterativeRobot
             mConnectionMonitor = ConnectionMonitor.getInstance();
             mSubsystemManager = new SubsystemManager(
                     Arrays.asList(mDrive, mSuperstructure,
-                            mConnectionMonitor, mLED));
+                            mConnectionMonitor, mLED, mTurret));
 
             // Initialize other helper objects
             mCheesyDriveHelper = new CheesyDriveHelper();
@@ -284,6 +286,13 @@ public class Robot extends IterativeRobot
 
             mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(mControlBoard.getThrottle(), mControlBoard.getTurn(),
                         mControlBoard.getQuickTurn(), mControlBoard.getSlowDrive()));
+            
+            if (mControlBoard.getSwitchTurretMode()) {
+                Turret.WantedState[] enumValues = Turret.WantedState.values();
+                int newIdx = mTurret.getWantedState().ordinal() + 1;
+                if (newIdx > enumValues.length) newIdx = 0;
+                mTurret.setWantedState(enumValues[newIdx]);
+            }
             
             allButTestPeriodic();
         }

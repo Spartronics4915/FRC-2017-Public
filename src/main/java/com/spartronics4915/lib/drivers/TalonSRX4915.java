@@ -293,7 +293,7 @@ public class TalonSRX4915 implements Sendable, MotorSafety
             return;
         mSensor = dev;
         mQuadCodesPerRev = quadCodesPerRev;
-        mTalon.configSelectedFeedbackSensor(dev, 0/* pidIdx */, sInitTimeoutMS);
+        mTalon.configSelectedFeedbackSensor(dev, sPidIdx/* pidIdx */, sInitTimeoutMS);
         mTalon.setSensorPhase(sensorPhase);
         mTalon.setInverted(invertMotorOutput);
     }

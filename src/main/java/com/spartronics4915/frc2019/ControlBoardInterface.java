@@ -15,4 +15,5 @@ public interface ControlBoardInterface
 
     boolean getSlowDrive();
 
+    boolean getSwitchTurretMode();
 }

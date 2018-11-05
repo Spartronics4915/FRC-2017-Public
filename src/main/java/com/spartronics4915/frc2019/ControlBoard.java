@@ -62,4 +62,9 @@ public class ControlBoard implements ControlBoardInterface
     public boolean getSlowDrive() {
         return mDrivestick.getRawButton(14);
     }
+
+    @Override
+    public boolean getSwitchTurretMode() {
+        return mDrivestick.getRawButtonReleased(1);
+    }
 }
