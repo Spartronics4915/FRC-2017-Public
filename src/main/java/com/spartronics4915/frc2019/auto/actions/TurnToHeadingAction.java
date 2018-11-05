@@ -1,7 +1,7 @@
 package com.spartronics4915.frc2019.auto.actions;
 
 import com.spartronics4915.frc2019.subsystems.Drive;
-import com.spartronics4915.lib.util.math.Rotation2d;
+import com.spartronics4915.lib.math.Rotation2d;
 import com.spartronics4915.lib.util.Logger;
 
 /**

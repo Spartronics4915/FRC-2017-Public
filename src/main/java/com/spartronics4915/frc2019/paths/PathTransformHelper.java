@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import com.spartronics4915.frc2019.Constants;
 import com.spartronics4915.frc2019.paths.PathBuilder.Waypoint;
-import com.spartronics4915.lib.util.math.RigidTransform2d;
-import com.spartronics4915.lib.util.math.Translation2d;
+import com.spartronics4915.lib.math.Pose2d;
+import com.spartronics4915.lib.math.Translation2d;
 
 public class PathTransformHelper
 {
@@ -18,19 +18,19 @@ public class PathTransformHelper
         return waypoints;
     }
     
-    public static RigidTransform2d mirrorRigidTransformAboutAxis(RigidTransform2d rt, boolean mirrorX, boolean mirrorY)
+    public static Pose2d mirrorPoseAboutAxis(Pose2d rt, boolean mirrorX, boolean mirrorY)
     {
-        rt.setTranslation(mirrorTranslationAboutAxis(rt.getTranslation(), mirrorX, mirrorY));
+        rt = new Pose2d(mirrorTranslationAboutAxis(rt.getTranslation(), mirrorX, mirrorY), rt.getRotation());
         return rt;
     }
     
     public static Translation2d mirrorTranslationAboutAxis(Translation2d translation, boolean mirrorX, boolean mirrorY)
     {
         if (mirrorX)
-            translation.setX(Constants.kFieldDimensionTranslation.x() - translation.x());
+            translation = new Translation2d(Constants.kFieldDimensionTranslation.x() - translation.x(), translation.y());
         
         if (mirrorY)
-            translation.setY(Constants.kFieldDimensionTranslation.y() - translation.y());
+            translation = new Translation2d(translation.x(), Constants.kFieldDimensionTranslation.y() - translation.y());
         
         return translation;
     }

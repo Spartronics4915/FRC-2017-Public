@@ -3,8 +3,8 @@ package com.spartronics4915.frc2019.loops;
 import com.spartronics4915.frc2019.Kinematics;
 import com.spartronics4915.frc2019.RobotState;
 import com.spartronics4915.frc2019.subsystems.Drive;
-import com.spartronics4915.lib.util.math.Rotation2d;
-import com.spartronics4915.lib.util.math.Twist2d;
+import com.spartronics4915.lib.math.Rotation2d;
+import com.spartronics4915.lib.math.Twist2d;
 
 /**
  * Periodically estimates the state of the robot using the robot's distance

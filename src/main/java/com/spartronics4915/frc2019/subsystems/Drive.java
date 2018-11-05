@@ -1,23 +1,20 @@
 package com.spartronics4915.frc2019.subsystems;
 
-import java.util.Optional;
-
 import com.spartronics4915.frc2019.Constants;
 import com.spartronics4915.frc2019.Kinematics;
 import com.spartronics4915.frc2019.RobotState;
-import com.spartronics4915.frc2019.ShooterAimingParameters;
 import com.spartronics4915.frc2019.loops.Loop;
 import com.spartronics4915.frc2019.loops.Looper;
 import com.spartronics4915.lib.util.DriveSignal;
 import com.spartronics4915.lib.util.ReflectingCSVWriter;
 import com.spartronics4915.lib.util.Util;
-import com.spartronics4915.lib.util.control.Lookahead;
-import com.spartronics4915.lib.util.control.Path;
-import com.spartronics4915.lib.util.control.PathFollower;
-import com.spartronics4915.lib.util.drivers.TalonSRX4915Drive;
-import com.spartronics4915.lib.util.math.RigidTransform2d;
-import com.spartronics4915.lib.util.math.Rotation2d;
-import com.spartronics4915.lib.util.math.Twist2d;
+import com.spartronics4915.lib.control.Lookahead;
+import com.spartronics4915.lib.control.Path;
+import com.spartronics4915.lib.control.PathFollower;
+import com.spartronics4915.lib.drivers.TalonSRX4915Drive;
+import com.spartronics4915.lib.math.Pose2d;
+import com.spartronics4915.lib.math.Rotation2d;
+import com.spartronics4915.lib.math.Twist2d;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -136,12 +133,6 @@ public class Drive extends Subsystem
                     case TURN_TO_ROBOTANGLE:
                         //updateTurnToRobotHeading(timestamp);
                         logWarning("TURN_TO_ROBOTANGLE unimplemented");
-                        return;
-                    case DRIVE_TOWARDS_GOAL_COARSE_ALIGN:
-                        updateDriveTowardsGoalCoarseAlign(timestamp);
-                        return;
-                    case DRIVE_TOWARDS_GOAL_APPROACH:
-                        updateDriveTowardsGoalApproach(timestamp);
                         return;
                     case FIND_CUBE:
                         searchForCube(timestamp);
@@ -479,20 +470,6 @@ public class Drive extends Subsystem
     }
 
     /**
-     * Update the heading at which the robot thinks the boiler is.
-     *
-     * Is called periodically when the robot is auto-aiming towards the boiler.
-     */
-    private void updateGoalHeading(double timestamp)
-    {
-        Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters();
-        if (aim.isPresent())
-        {
-            mTargetHeading = aim.get().getRobotToGoal();
-        }
-    }
-
-    /**
      * Turn the robot to a target heading.
      *
      * Is called periodically when the robot is auto-aiming towards a target.
@@ -566,89 +543,6 @@ public class Drive extends Subsystem
     }
 
     /**
-     * Essentially does the same thing as updateTurnToHeading but sends the
-     * robot into the DRIVE_TOWARDS_GOAL_APPROACH
-     * state if it detects we are not at an optimal shooting range
-     */
-    private void updateDriveTowardsGoalCoarseAlign(double timestamp)
-    {
-        if (!this.isInitialized())
-            return;
-        updateGoalHeading(timestamp);
-        updateTurnToFieldHeading(timestamp);
-        mIsApproaching = true;
-        if (mIsOnTarget)
-        {
-            // Done coarse alignment.
-
-            Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters();
-            if (aim.isPresent())
-            {
-                final double distance = aim.get().getRange();
-
-                if (distance < Constants.kShooterOptimalRangeCeiling &&
-                        distance > Constants.kShooterOptimalRangeFloor)
-                {
-                    // Don't drive, just shoot.
-                    mDriveControlState = DriveControlState.AIM_TO_GOAL;
-                    mIsApproaching = false;
-                    mIsOnTarget = false;
-                    updatePositionSetpoint(mMotorGroup.getLeftDistanceInches(),
-                            mMotorGroup.getRightDistanceInches());
-                    return;
-                }
-            }
-
-            mDriveControlState = DriveControlState.DRIVE_TOWARDS_GOAL_APPROACH;
-            mIsOnTarget = false;
-        }
-    }
-
-    /**
-     * Drives the robot straight forwards until it is at an optimal shooting
-     * distance. Then sends the robot into the AIM_TO_GOAL state for one final
-     * alignment
-     */
-    private void updateDriveTowardsGoalApproach(double timestamp)
-    {
-        if (!this.isInitialized())
-            return;
-        Optional<ShooterAimingParameters> aim = mRobotState.getAimingParameters();
-        mIsApproaching = true;
-        if (aim.isPresent())
-        {
-            final double distance = aim.get().getRange();
-            double error = 0.0;
-            if (distance < Constants.kShooterOptimalRangeFloor)
-            {
-                error = distance - Constants.kShooterOptimalRangeFloor;
-            }
-            else if (distance > Constants.kShooterOptimalRangeCeiling)
-            {
-                error = distance - Constants.kShooterOptimalRangeCeiling;
-            }
-            final double kGoalPosTolerance = 1.0; // inches
-            if (Util.epsilonEquals(error, 0.0, kGoalPosTolerance))
-            {
-                // We are on target. Switch back to auto-aim.
-                mDriveControlState = DriveControlState.AIM_TO_GOAL;
-                RobotState.getInstance().resetVision();
-                mIsApproaching = false;
-                updatePositionSetpoint(mMotorGroup.getLeftDistanceInches(),
-                        mMotorGroup.getRightDistanceInches());
-                return;
-            }
-            updatePositionSetpoint(mMotorGroup.getLeftDistanceInches() + error,
-                    mMotorGroup.getRightDistanceInches() + error);
-        }
-        else
-        {
-            updatePositionSetpoint(mMotorGroup.getLeftDistanceInches(),
-                    mMotorGroup.getRightDistanceInches());
-        }
-    }
-
-    /**
      * Called periodically when the robot is in path following mode. Updates the
      * path follower with the robots latest
      * pose, distance driven, and velocity, the updates the wheel velocity
@@ -658,7 +552,7 @@ public class Drive extends Subsystem
     {
         if (!this.isInitialized())
             return;
-        RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
+        Pose2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
         Twist2d command = mPathFollower.update(timestamp, robot_pose,
                 RobotState.getInstance().getDistanceDriven(),
                 RobotState.getInstance().getPredictedVelocity().dx);

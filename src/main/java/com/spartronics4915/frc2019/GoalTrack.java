@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.spartronics4915.lib.util.math.Translation2d;
+import com.spartronics4915.lib.math.Translation2d;
 
 import edu.wpi.first.wpilibj.Timer;
 

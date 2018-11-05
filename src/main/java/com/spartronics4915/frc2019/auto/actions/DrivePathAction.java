@@ -2,7 +2,7 @@ package com.spartronics4915.frc2019.auto.actions;
 
 import com.spartronics4915.frc2019.paths.PathContainer;
 import com.spartronics4915.frc2019.subsystems.Drive;
-import com.spartronics4915.lib.util.control.Path;
+import com.spartronics4915.lib.control.Path;
 
 /**
  * Drives the robot along the Path defined in the PathContainer object. The

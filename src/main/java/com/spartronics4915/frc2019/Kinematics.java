@@ -1,8 +1,8 @@
 package com.spartronics4915.frc2019;
 
-import com.spartronics4915.lib.util.math.RigidTransform2d;
-import com.spartronics4915.lib.util.math.Rotation2d;
-import com.spartronics4915.lib.util.math.Twist2d;
+import com.spartronics4915.lib.math.Pose2d;
+import com.spartronics4915.lib.math.Rotation2d;
+import com.spartronics4915.lib.math.Twist2d;
 
 /**
  * Provides forward and inverse kinematics equations for the robot modeling the
@@ -50,7 +50,7 @@ public class Kinematics
     }
 
     /** Append the result of forward kinematics to a previous pose. */
-    public static RigidTransform2d integrateForwardKinematics(RigidTransform2d current_pose, double left_wheel_delta,
+    public static Pose2d integrateForwardKinematics(Pose2d current_pose, double left_wheel_delta,
             double right_wheel_delta, Rotation2d current_heading)
     {
         Twist2d with_gyro = forwardKinematics(current_pose.getRotation(), left_wheel_delta, right_wheel_delta,
@@ -62,10 +62,10 @@ public class Kinematics
      * For convenience, integrate forward kinematics with a Twist2d and previous
      * rotation.
      */
-    public static RigidTransform2d integrateForwardKinematics(RigidTransform2d current_pose,
+    public static Pose2d integrateForwardKinematics(Pose2d current_pose,
             Twist2d forward_kinematics)
     {
-        return current_pose.transformBy(RigidTransform2d.exp(forward_kinematics));
+        return current_pose.transformBy(Pose2d.exp(forward_kinematics));
     }
 
     /**

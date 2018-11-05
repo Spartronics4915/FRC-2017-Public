@@ -1,7 +1,7 @@
 package com.spartronics4915.frc2019.auto.actions;
 
 import com.spartronics4915.frc2019.RobotState;
-import com.spartronics4915.lib.util.math.RigidTransform2d;
+import com.spartronics4915.lib.math.Pose2d;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -16,9 +16,9 @@ import edu.wpi.first.wpilibj.Timer;
 public class CorrectPoseAction extends RunOnceAction
 {
 
-    RigidTransform2d mCorrection;
+    Pose2d mCorrection;
 
-    public CorrectPoseAction(RigidTransform2d correction)
+    public CorrectPoseAction(Pose2d correction)
     {
         mCorrection = correction;
     }

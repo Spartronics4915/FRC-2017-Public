@@ -9,9 +9,10 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import com.spartronics4915.frc2019.auto.AutoModeExecuter;
+import com.spartronics4915.frc2019.lidar.LidarProcessor;
+import com.spartronics4915.frc2019.lidar.LidarServer;
 import com.spartronics4915.frc2019.loops.Looper;
 import com.spartronics4915.frc2019.loops.RobotStateEstimator;
-import com.spartronics4915.frc2019.loops.VisionProcessor;
 import com.spartronics4915.frc2019.paths.profiles.PathAdapter;
 import com.spartronics4915.frc2019.subsystems.ConnectionMonitor;
 import com.spartronics4915.frc2019.subsystems.Drive;
@@ -21,7 +22,7 @@ import com.spartronics4915.lib.util.CANProbe;
 import com.spartronics4915.lib.util.CheesyDriveHelper;
 import com.spartronics4915.lib.util.Logger;
 import com.spartronics4915.lib.util.DriveSignal;
-import com.spartronics4915.lib.util.math.RigidTransform2d;
+import com.spartronics4915.lib.math.Pose2d;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -150,8 +151,18 @@ public class Robot extends IterativeRobot
             mEnabledLooper = new Looper();
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
-            mEnabledLooper.register(VisionProcessor.getInstance());
             mEnabledLooper.register(RobotStateEstimator.getInstance());
+            mEnabledLooper.register(LidarProcessor.getInstance());
+
+            try {
+                SmartDashboard.putString("LIDAR status", "starting");
+                boolean started = LidarServer.getInstance().start();
+                SmartDashboard.putString("LIDAR status", started ? "started" : "failed to start");
+            } catch (Throwable t) {
+                SmartDashboard.putString("LIDAR status", "crashed: " + t);
+                t.printStackTrace();
+                throw t;
+            }
 
             AutoModeSelector.initAutoModeSelector();
             SmartDashboard.putString(kRobotTestModeOptions,
@@ -176,7 +187,7 @@ public class Robot extends IterativeRobot
     public void zeroAllSensors()
     {
         mSubsystemManager.zeroSensors();
-        mRobotState.reset(Timer.getFPGATimestamp(), new RigidTransform2d());
+        mRobotState.reset(Timer.getFPGATimestamp(), new Pose2d());
     }
 
     /**

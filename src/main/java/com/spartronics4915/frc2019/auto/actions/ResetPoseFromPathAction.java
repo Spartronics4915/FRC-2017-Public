@@ -3,7 +3,7 @@ package com.spartronics4915.frc2019.auto.actions;
 import com.spartronics4915.frc2019.RobotState;
 import com.spartronics4915.frc2019.paths.PathContainer;
 import com.spartronics4915.frc2019.subsystems.Drive;
-import com.spartronics4915.lib.util.math.RigidTransform2d;
+import com.spartronics4915.lib.math.Pose2d;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -28,7 +28,7 @@ public class ResetPoseFromPathAction extends RunOnceAction
     @Override
     public synchronized void runOnce()
     {
-        RigidTransform2d startPose = mPathContainer.getStartPose();
+        Pose2d startPose = mPathContainer.getStartPose();
         RobotState.getInstance().reset(Timer.getFPGATimestamp(), startPose);
         Drive.getInstance().setGyroAngle(startPose.getRotation());
     }

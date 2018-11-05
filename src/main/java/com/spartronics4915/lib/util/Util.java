@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public class Util
 {
+    public static final double kEpsilon = 1e-12;
 
     /** Prevent this class from being instantiated. */
     private Util()
@@ -74,6 +75,34 @@ public class Util
         return result;
     }
     
+    // check if a ~= b
+    public static boolean epsilonEquals(double a, double b)
+    {
+        return epsilonEquals(a, b, kEpsilon);
+    }
+
+    // check if a < b
+    public static boolean epsilonLessThan(double a, double b)
+    {
+        return epsilonLessThan(a, b, kEpsilon);
+    }
+
+    // check if a > b
+    public static boolean epsilonGreaterThan(double a, double b)
+    {
+        return epsilonGreaterThan(a, b, kEpsilon);
+    }
+
+    public static boolean allCloseTo(List<Double> list, double value)
+    {
+        boolean result = true;
+        for (Double value_in : list)
+        {
+            result &= epsilonEquals(value_in, value);
+        }
+        return result;
+    }
+
     public static String getGameSpecificMessage()
     {
         Timer t = new Timer();

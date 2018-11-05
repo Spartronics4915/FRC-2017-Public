@@ -1,7 +1,7 @@
 package com.spartronics4915.frc2019;
 
 import com.spartronics4915.lib.util.ConstantsBase;
-import com.spartronics4915.lib.util.math.Translation2d;
+import com.spartronics4915.lib.math.Translation2d;
 
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -17,16 +17,15 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class Constants extends ConstantsBase
 {
     public static final boolean kUseTestbedConstants = false; // XXX: We should use the ConstantsBase reflection -> file instead of this
-    // Hardware configuration constants --------------------------------------------------------
-    
-    // CAN Bus --------------------------- 
+    /* HARDWARE CONFIGURATION CONSTANTS ----------------------------------------------------- */
+    // CAN Bus
     // there are at least three families of ids on the CAN bus defined by
     // these device classes:
     //      PDP - power distribution panel (only one of these)
     //      SRX - CANTalon Ids
     //      PCM - Pressure Control Module Ids (often 0 or 1)
     
-    //  -- Talon SRX Channels --------------
+    // Talon SRX Channels --------------
     //      (Note that if multiple talons are dedicated to a mechanism, any sensors
     //      are attached to the master)
     public static final int kLeftDriveMasterId = 1;
@@ -41,25 +40,25 @@ public class Constants extends ConstantsBase
     public static final int kNumPCMs = 1; // Pressure control module (pneumatics)
     public static final int kNumCANDevices = kNumTalons + kNumPCMs; // don't count PDP
     
-    // -- Pressure Control Module (PCM) Channels ----   
+    // Pressure Control Module (PCM) Channels
 
-    // PWM (Servo) Pins ----------------------------
+    // PWM (Servo) Pins
     
-    // Relay Pins -----------------------------------
+    // Relay Pins
     public static final int kLEDVisionLampId = 0;
     public static final int kLEDDriverLEDId = 1;
     
-    // DIO Pins --------------------------------------
+    // DIO Pins
     
-    // Analog In Pins ---------------------------------
+    // Analog In Pins
 
-    // Software configuration constants ----------------------------------------------------------
+    // Software configuration constants
     public static final double kLooperDt = 0.005;
     
     // Vision
     public static final int kAndroidAppTcpPort = 8254;
 
-    /* ROBOT PHYSICAL CONSTANTS ---------------------------------------------------------  */
+    /* ROBOT PHYSICAL CONSTANTS ----------------------------------------------------------- */
 
     // Wheels
     public static final double kDriveWheelDiameterInches = 6;
@@ -71,6 +70,22 @@ public class Constants extends ConstantsBase
     // public static final double kCenterToIntakeDistance = 20.9675;
     public static final double kCenterToRearBumperDistance = kCenterToFrontBumperDistance;
     public static final double kCenterToSideBumperDistance = 15.375;
+
+    /* LIDAR CONSTANTS -------------------------------------------------------------------- */
+    public static final int kLidarScanSize = 400;
+    public static final int kLidarNumScansToStore = 10;
+    public static final String kLidarPath = "/home/root/chezy_lidar";
+    public static final double kLidarRestartTime = 2.5;
+
+    public static final String kLidarLogDir = "/home/lvuser/lidarLogs/";
+    public static final int kNumLidarLogsToKeep = 10;
+    public static final double kLidarICPTranslationEpsilon = 0.01; // convergence threshold for tx,ty
+    public static final double kLidarICPAngleEpsilon = 0.01;       // convergence threshold for theta
+
+    // Pose of the LIDAR frame w.r.t. the robot frame
+    public static final double kLidarXOffset = -3.3211;
+    public static final double kLidarYOffset = 0.0;
+    public static final double kLidarYawAngleDegrees = 0.0;
 
     /* CONTROL LOOP GAINS ---------------------------------------------------------------- */
 

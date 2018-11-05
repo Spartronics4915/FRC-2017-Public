@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.spartronics4915.frc2019.auto.actions.WaitForPathMarkerAction;
 import com.spartronics4915.lib.util.Logger;
-import com.spartronics4915.lib.util.control.Path;
-import com.spartronics4915.lib.util.control.PathSegment;
-import com.spartronics4915.lib.util.math.RigidTransform2d;
-import com.spartronics4915.lib.util.math.Rotation2d;
-import com.spartronics4915.lib.util.math.Translation2d;
+import com.spartronics4915.lib.control.Path;
+import com.spartronics4915.lib.control.PathSegment;
+import com.spartronics4915.lib.math.Pose2d;
+import com.spartronics4915.lib.math.Rotation2d;
+import com.spartronics4915.lib.math.Translation2d;
 
 /**
  * Class used to convert a list of Waypoints into a Path object consisting of
@@ -190,8 +190,8 @@ public class PathBuilder
 
         private static Translation2d intersect(Line l1, Line l2)
         {
-            final RigidTransform2d lineA = new RigidTransform2d(l1.end, new Rotation2d(l1.slope, true).normal());
-            final RigidTransform2d lineB = new RigidTransform2d(l2.start, new Rotation2d(l2.slope, true).normal());
+            final Pose2d lineA = new Pose2d(l1.end, new Rotation2d(l1.slope, true).normal());
+            final Pose2d lineB = new Pose2d(l2.start, new Rotation2d(l2.slope, true).normal());
             return lineA.intersection(lineB);
         }
     }

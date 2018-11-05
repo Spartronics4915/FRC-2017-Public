@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.spartronics4915.frc2019.paths.PathBuilder.Waypoint;
-import com.spartronics4915.lib.util.control.Path;
-import com.spartronics4915.lib.util.math.RigidTransform2d;
-import com.spartronics4915.lib.util.math.Rotation2d;
-import com.spartronics4915.lib.util.math.Translation2d;
+import com.spartronics4915.lib.control.Path;
+import com.spartronics4915.lib.math.Pose2d;
+import com.spartronics4915.lib.math.Rotation2d;
+import com.spartronics4915.lib.math.Translation2d;
 
 public class CrossBaselinePath implements PathContainer {
 
@@ -33,9 +33,9 @@ public class CrossBaselinePath implements PathContainer {
     }
 
     @Override
-    public RigidTransform2d getStartPose()
+    public Pose2d getStartPose()
     {
-        return new RigidTransform2d(new Translation2d(18, 45), Rotation2d.fromDegrees(90.0));
+        return new Pose2d(new Translation2d(18, 45), Rotation2d.fromDegrees(90.0));
     }
 
     @Override
