@@ -104,7 +104,7 @@ public class LED extends Subsystem
     private final byte[] kEjectHarvester = "10".getBytes();    //FADE BLUE
     private final byte[] kCarryCube = "11".getBytes();         //YELLOW CHASING BLUE || FADE YELLOW
     
-    public LED()
+    private LED()
     {
         boolean success = true;
 
