@@ -54,6 +54,9 @@ public class Turret extends Subsystem {
         mMotor = new TalonSRX4915(Constants.kTurretMotorId);
         mMotor.configMotorAndSensor(kOutputInverted /* Is motor output inverted */, FeedbackDevice.QuadEncoder,
             kOutputInverted /* Is sensor inverted */, Constants.kTurretEncoderCodesPerRev);
+        mMotor.configPID(0 /* PID Slot 0 */,
+            Constants.TurretPIDConstants.kP, Constants.TurretPIDConstants.kI, Constants.TurretPIDConstants.kD, Constants.TurretPIDConstants.kF,
+            Constants.TurretPIDConstants.kIZone, Constants.TurretPIDConstants.kRampRate);
         mMotor.setBrakeMode(true);
     }
 
@@ -105,9 +108,12 @@ public class Turret extends Subsystem {
         }
     };
 
-    private double calculateTurretRevolutions(Pose2d robotPose, Translation2d targetTranslation) {
-        double angle = Math.asin(Math.abs(robotPose.getTranslation().x() - targetTranslation.x())/robotPose.getTranslation().distance(targetTranslation));
-        return Math.toDegrees(angle) / 360;
+    private static double calculateTurretRevolutions(Pose2d robotPose, Translation2d targetTranslation) {
+        Rotation2d angle = new Rotation2d(robotPose.getTranslation().x()-targetTranslation.x(),
+            robotPose.getTranslation().y()-targetTranslation.y(), true).rotateBy(robotPose.getRotation().inverse());
+        // 0 degress points "right" towards the target (on the negative side of the target, where the target is the origin)
+        // Positive rotations run clockwise
+        return (angle.getDegrees() + 180) / 360;
     }
 
     private SystemState defaultStateTransfer()
@@ -166,7 +172,8 @@ public class Turret extends Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-        dashboardPutBoolean("turretUsingLIDAR", mUseLidar);
+        dashboardPutString("turretState", "mWantedState: " + mSystemState.toString() +
+            ", mUseLidar: " + mUseLidar);
     }
 
 }
