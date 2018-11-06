@@ -14,7 +14,8 @@ import com.spartronics4915.lib.math.Translation2d;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class Turret extends Subsystem {
+public class Turret extends Subsystem
+{
 
     private static Turret mInstance = null;
 
@@ -27,13 +28,15 @@ public class Turret extends Subsystem {
         return mInstance;
     }
 
-    public enum WantedState {
+    public enum WantedState
+    {
         DISABLED,
         FOLLOW_ODOMETRY,
         FOLLOW_LIDAR,
     }
 
-    private enum SystemState {
+    private enum SystemState
+    {
         DISABLING,
         FOLLOWING,
     }
@@ -47,18 +50,20 @@ public class Turret extends Subsystem {
     private SystemState mSystemState = SystemState.DISABLING;
     private boolean mUseLidar = false;
 
-    private Turret() {
+    private Turret()
+    {
         mLidar = LidarProcessor.getInstance();
         mOdometry = RobotState.getInstance();
 
         mMotor = new TalonSRX4915(Constants.kTurretMotorId);
         mMotor.configMotorAndSensor(kOutputInverted /* Is motor output inverted */, FeedbackDevice.QuadEncoder,
-            kOutputInverted /* Is sensor inverted */, Constants.kTurretEncoderCodesPerRev);
+                kOutputInverted /* Is sensor inverted */, Constants.kTurretEncoderCodesPerRev);
         mMotor.setBrakeMode(true);
     }
 
     private Loop mLoop = new Loop()
     {
+
         @Override
         public void onStart(double timestamp)
         {
@@ -79,9 +84,12 @@ public class Turret extends Subsystem {
                 {
                     case FOLLOWING:
                         Pose2d pose;
-                        if (mUseLidar) {
+                        if (mUseLidar)
+                        {
                             pose = mLidar.doICP();
-                        } else {
+                        }
+                        else
+                        {
                             pose = mOdometry.getFieldToVehicle(Timer.getFPGATimestamp());
                         }
 
@@ -99,14 +107,17 @@ public class Turret extends Subsystem {
         @Override
         public void onStop(double timestamp)
         {
-            synchronized (Turret.this) {
+            synchronized (Turret.this)
+            {
                 stop();
             }
         }
     };
 
-    private double calculateTurretRevolutions(Pose2d robotPose, Translation2d targetTranslation) {
-        double angle = Math.asin(Math.abs(robotPose.getTranslation().x() - targetTranslation.x())/robotPose.getTranslation().distance(targetTranslation));
+    private double calculateTurretRevolutions(Pose2d robotPose, Translation2d targetTranslation)
+    {
+        double angle =
+                Math.asin(Math.abs(robotPose.getTranslation().x() - targetTranslation.x()) / robotPose.getTranslation().distance(targetTranslation));
         return Math.toDegrees(angle) / 360;
     }
 
@@ -139,33 +150,39 @@ public class Turret extends Subsystem {
         mWantedState = wantedState;
     }
 
-    public synchronized WantedState getWantedState() {
+    public synchronized WantedState getWantedState()
+    {
         return mWantedState;
     }
 
     @Override
-    public void registerEnabledLoops(Looper enabledLooper) {
+    public void registerEnabledLoops(Looper enabledLooper)
+    {
         enabledLooper.register(mLoop);
     }
 
     @Override
-    public void stop() {
+    public void stop()
+    {
         mMotor.stopMotor();
     }
 
     @Override
-    public void zeroSensors() {
+    public void zeroSensors()
+    {
         // Encoder only gets reset on startup
     }
 
     @Override
-    public boolean checkSystem(String variant) {
+    public boolean checkSystem(String variant)
+    {
         logNotice("Check system not implemented");
         return false;
     }
 
     @Override
-    public void outputToSmartDashboard() {
+    public void outputToSmartDashboard()
+    {
         dashboardPutBoolean("turretUsingLIDAR", mUseLidar);
     }
 
