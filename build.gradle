@@ -1,22 +1,26 @@
+import org.gradle.api.java.archives.internal.DefaultManifest
+import java.text.SimpleDateFormat
+
 plugins {
     id "java"
     id "eclipse"
-    id "idea"
-    id "jaci.openrio.gradle.GradleRIO" version "2018.01.22"
+    id "edu.wpi.first.GradleRIO" version "2019.0.0-alpha-3"
 }
 
-def TEAM = 4915
 def ROBOT_CLASS = "com.spartronics4915.frc2019.Robot"
 
 deploy {
     targets {
-        target("roborio", jaci.openrio.gradle.frc.RoboRIO) {
-            team = TEAM
+        target("roborio", edu.wpi.first.gradlerio.frc.RoboRIO) {
+            // team number is loaded either from .wpilib/wpilib_preferences.json
+            // or from the command line.
+            team = getTeamNumber()
         }
     }
     artifacts {
-        artifact('frcJava', jaci.openrio.gradle.frc.FRCJavaArtifact) {
+        artifact('frcJava', edu.wpi.first.gradlerio.frc.FRCJavaArtifact) {
             targets << "roborio"
+            debug = getDebugOrDefault(false)
         }
     }
 }
@@ -30,13 +34,34 @@ dependencies {
     compile group: 'gov.nist.math', name: 'jama', version: '1.0.3' // Linear algebra
     compile wpilib()
     compile ctre()
+    compile navx()
 }
 
 jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    manifest jaci.openrio.gradle.GradleRIOPlugin.javaManifest(ROBOT_CLASS)
+    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_CLASS)
+    manifest { DefaultManifest mf ->
+        String user = System.getProperty("user.name");
+        SimpleDateFormat fmt = new SimpleDateFormat("MMMMM dd, hh:mm a");
+        ByteArrayOutputStream gitinfo = new ByteArrayOutputStream();
+        exec {
+            ignoreExitValue true
+            commandLine 'git', 'describe', "--tags", "--dirty"
+            standardOutput = gitinfo
+        }
+        mf.attributes "Built-By": user,
+                      "Built-At": fmt.format(new Date()),
+                      "Code-Version": gitinfo.toString().trim()
+    }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.4'
+// Force Java 8 Compatibility mode for deployed code, in case the develoment
+// system is using Java 10.
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
+wrapper {
+    gradleVersion = '4.9'
 }
