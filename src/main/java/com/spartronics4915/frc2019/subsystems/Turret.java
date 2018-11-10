@@ -13,22 +13,27 @@ import com.spartronics4915.lib.math.Translation2d;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class Turret extends Subsystem {
+public class Turret extends Subsystem
+{
 
     private static Turret mInstance = null;
 
-    public static Turret getInstance() {
-        if (mInstance == null) {
+    public static Turret getInstance()
+    {
+        if (mInstance == null)
+        {
             mInstance = new Turret();
         }
         return mInstance;
     }
 
-    public enum WantedState {
+    public enum WantedState
+    {
         DISABLED, FOLLOW_ODOMETRY, FOLLOW_LIDAR,
     }
 
-    private enum SystemState {
+    private enum SystemState
+    {
         DISABLING, FOLLOWING,
     }
 
@@ -42,7 +47,8 @@ public class Turret extends Subsystem {
     private boolean mUseLidar = false;
     private double mLastTurretAngle = 0;
 
-    private Turret() {
+    private Turret()
+    {
         mLidar = LidarProcessor.getInstance();
         mOdometry = RobotState.getInstance();
 
@@ -55,46 +61,57 @@ public class Turret extends Subsystem {
         mMotor.setBrakeMode(true);
     }
 
-    private Loop mLoop = new Loop() {
+    private Loop mLoop = new Loop()
+    {
 
         @Override
-        public void onStart(double timestamp) {
-            synchronized (Turret.this) {
+        public void onStart(double timestamp)
+        {
+            synchronized (Turret.this)
+            {
                 mWantedState = WantedState.DISABLED;
                 mSystemState = SystemState.DISABLING;
             }
         }
 
         @Override
-        public void onLoop(double timestamp) {
-            synchronized (Turret.this) {
+        public void onLoop(double timestamp)
+        {
+            synchronized (Turret.this)
+            {
                 SystemState newState = mSystemState;
-                switch (mSystemState) {
-                case FOLLOWING:
-                    Pose2d pose;
-                    if (mUseLidar) {
-                        pose = mLidar.doICP();
-                    } else {
-                        pose = mOdometry.getFieldToVehicle(Timer.getFPGATimestamp());
-                    }
+                switch (mSystemState)
+                {
+                    case FOLLOWING:
+                        Pose2d pose;
+                        if (mUseLidar)
+                        {
+                            pose = mLidar.doICP();
+                        }
+                        else
+                        {
+                            pose = mOdometry.getFieldToVehicle(Timer.getFPGATimestamp());
+                        }
 
-                    double newAbsoluteAngle = calculateAbsoluteTurretAngle(pose, Constants.kTurretTargetFieldPosition);
-                    mMotor.setPositionRotations(
-                            mMotor.getSensorPositionRotations() + (newAbsoluteAngle - mLastTurretAngle) / 360);
-                    mLastTurretAngle = newAbsoluteAngle;
-                    break;
-                case DISABLING:
-                    stop();
-                default:
-                    newState = defaultStateTransfer();
+                        double newAbsoluteAngle = calculateAbsoluteTurretAngle(pose, Constants.kTurretTargetFieldPosition);
+                        mMotor.setPositionRotations(
+                                mMotor.getSensorPositionRotations() + (newAbsoluteAngle - mLastTurretAngle) / 360);
+                        mLastTurretAngle = newAbsoluteAngle;
+                        break;
+                    case DISABLING:
+                        stop();
+                    default:
+                        newState = defaultStateTransfer();
                 }
                 mSystemState = newState;
             }
         }
 
         @Override
-        public void onStop(double timestamp) {
-            synchronized (Turret.this) {
+        public void onStop(double timestamp)
+        {
+            synchronized (Turret.this)
+            {
                 stop();
             }
         }
@@ -108,7 +125,8 @@ public class Turret extends Subsystem {
      * 
      * @return Absolute angle in degrees, with a range of 0-360
      */
-    private double calculateAbsoluteTurretAngle(Pose2d robotPose, Translation2d targetTranslation) {
+    private double calculateAbsoluteTurretAngle(Pose2d robotPose, Translation2d targetTranslation)
+    {
         robotPose.getTranslation().translateBy(Constants.kTurretRobotCenterOffset);
         Rotation2d angle = new Rotation2d(robotPose.getTranslation().x() - targetTranslation.x(),
                 robotPose.getTranslation().y() - targetTranslation.y(), true)
@@ -116,60 +134,69 @@ public class Turret extends Subsystem {
         return angle.getDegrees() + 180.0;
     }
 
-    private SystemState defaultStateTransfer() {
+    private SystemState defaultStateTransfer()
+    {
         SystemState newState = mSystemState;
-        switch (mWantedState) {
-        case DISABLED:
-            newState = SystemState.DISABLING;
-            break;
-        case FOLLOW_LIDAR:
-            newState = SystemState.FOLLOWING;
-            mUseLidar = true;
-            break;
-        case FOLLOW_ODOMETRY:
-            newState = SystemState.FOLLOWING;
-            mUseLidar = false;
-            break;
-        default:
-            newState = SystemState.DISABLING;
-            break;
+        switch (mWantedState)
+        {
+            case DISABLED:
+                newState = SystemState.DISABLING;
+                break;
+            case FOLLOW_LIDAR:
+                newState = SystemState.FOLLOWING;
+                mUseLidar = true;
+                break;
+            case FOLLOW_ODOMETRY:
+                newState = SystemState.FOLLOWING;
+                mUseLidar = false;
+                break;
+            default:
+                newState = SystemState.DISABLING;
+                break;
         }
         return newState;
     }
 
-    public synchronized void setWantedState(WantedState wantedState) {
+    public synchronized void setWantedState(WantedState wantedState)
+    {
         logNotice("Wanted state to " + wantedState.toString());
         mWantedState = wantedState;
     }
 
-    public synchronized WantedState getWantedState() {
+    public synchronized WantedState getWantedState()
+    {
         return mWantedState;
     }
 
     @Override
-    public void registerEnabledLoops(Looper enabledLooper) {
+    public void registerEnabledLoops(Looper enabledLooper)
+    {
         enabledLooper.register(mLoop);
     }
 
     @Override
-    public void stop() {
+    public void stop()
+    {
         mMotor.stopMotor();
     }
 
     @Override
-    public void zeroSensors() {
+    public void zeroSensors()
+    {
         // Encoder only gets reset on startup
     }
 
     @Override
-    public boolean checkSystem(String variant) {
+    public boolean checkSystem(String variant)
+    {
         logNotice("Check system not implemented");
         return false;
     }
 
     @Override
-    public void outputToSmartDashboard() {
-        dashboardPutString("turretState", "mWantedState: " + mSystemState.toString() + ", mUseLidar: " + mUseLidar);
+    public void outputToSmartDashboard()
+    {
+        dashboardPutString("turretState", mSystemState.toString() + ", mUseLidar: " + mUseLidar);
     }
 
 }

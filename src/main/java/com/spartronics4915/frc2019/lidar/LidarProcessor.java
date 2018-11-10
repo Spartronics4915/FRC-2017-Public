@@ -23,12 +23,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * Receives LIDAR points from the {@link LidarServer}, stores a set number
- * of scans/revolutions, and provides methods for processing the data.
+ * Receives LIDAR points from the {@link LidarServer}, stores a set number of
+ * scans/revolutions, and provides methods for processing the data.
  * <p>
  * All interfacing with the LIDAR should be done through this class.
  *
- * @see Constants.kChezyLidarNumScansToStore
+ * @see Constants.kLidarNumScansToStore
  * @see doICP()
  * @see getTowerPosition()
  */
@@ -41,6 +41,8 @@ public class LidarProcessor implements Loop {
         }
         return mInstance;
     }
+
+    private final String kPointCloudDashboardKey = "Lidar/points";
 
     private RobotState mRobotState = RobotState.getInstance();
     private LidarServer mLidarServer = LidarServer.getInstance();
@@ -58,7 +60,8 @@ public class LidarProcessor implements Loop {
         // delete old files if we're over the limit
         File logDir = new File(Constants.kLidarLogDir);
         File[] logFiles = logDir.listFiles();
-        if (logFiles == null) throw new IOException("List files in " + Constants.kLidarLogDir);
+        if (logFiles == null)
+            throw new IOException("List files in " + Constants.kLidarLogDir);
         Arrays.sort(logFiles, (f1, f2) -> {
             return Long.compare(f1.lastModified(), f2.lastModified());
         });
@@ -95,7 +98,7 @@ public class LidarProcessor implements Loop {
     }
 
     public void addPoint(LidarPoint point, boolean newScan) {
-        SmartDashboard.putNumber("LIDAR last_angle", point.angle);
+        SmartDashboard.putNumber("Lidar/angle", point.angle);
 
         Translation2d cartesian = point.toCartesian();
         logPoint(point.angle, point.distance, cartesian.x(), cartesian.y());
@@ -105,6 +108,7 @@ public class LidarProcessor implements Loop {
             if (newScan) { // crosses the 360-0 threshold. start a new scan
                 prev_timestamp = Timer.getFPGATimestamp();
 
+                SmartDashboard.putString(kPointCloudDashboardKey, "new");
                 // long start = System.nanoTime();
                 // Translation2d towerPos = getTowerPosition();
                 // long end = System.nanoTime();
@@ -120,6 +124,10 @@ public class LidarProcessor implements Loop {
 
             if (!excludePoint(cartesian.x(), cartesian.y())) {
                 getCurrentScan().addPoint(new Point(cartesian), point.timestamp);
+
+                // The point cloud output is relative to the robot's position, so it probably
+                // won't look to good if you move the robot around.
+                SmartDashboard.putString(kPointCloudDashboardKey, cartesian.x() + " " + cartesian.y());
             }
         } finally {
             lock.writeLock().unlock();
@@ -133,8 +141,7 @@ public class LidarProcessor implements Loop {
             RECT_Y_MIN = FIELD_CY - RECT_RY, RECT_Y_MAX = FIELD_CY + RECT_RY;
 
     private static boolean excludePoint(double x, double y) {
-        return x < RECT_X_MIN || x > RECT_X_MAX ||
-                y < RECT_Y_MIN || y > RECT_Y_MAX;
+        return x < RECT_X_MIN || x > RECT_X_MAX || y < RECT_Y_MIN || y > RECT_Y_MAX;
     }
 
     private LidarScan getCurrentScan() {
@@ -191,7 +198,12 @@ public class LidarProcessor implements Loop {
         lock.readLock().lock();
         try {
             Pose2d guess = mRobotState.getFieldToLidar(getCurrentScan().getTimestamp());
-            return icp.doICP(getCulledPoints(), new Transform(guess).inverse()).inverse().toPose2d();
+            Pose2d finalPose = icp.doICP(getCulledPoints(), new Transform(guess).inverse()).inverse().toPose2d();
+            SmartDashboard.putString("Lidar/pose", finalPose.getTranslation().x() + " " + finalPose.getTranslation().y()
+                    + " " + finalPose.getRotation().getDegrees());
+            // TODO: Maybe put the processing into its own looper and save past poses (like
+            // RobotState)
+            return finalPose;
         } finally {
             lock.readLock().unlock();
         }
@@ -234,17 +246,22 @@ public class LidarProcessor implements Loop {
     @Override
     public void onLoop(double timestamp) {
         if (timestamp - getPrevTimestamp() > Constants.kLidarRestartTime) {
-            // XXX: Is this a bug? It seems like this starts and stops the LIDAR server every kLidarRestartTime seconds
+            // XXX: Is this a bug? It seems like this starts and stops the LIDAR server
+            // every kLidarRestartTime seconds
             if (mLidarServer.isRunning()) {
                 System.err.println("Lidar timed out. Restarting");
                 mLidarServer.stop();
+                SmartDashboard.putString("Lidar/status", "Server restarting (timed out)");
             } else if (!mLidarServer.isEnding() && mLidarServer.start()) {
                 setPrevTimestamp(timestamp);
+                SmartDashboard.putString("Lidar/status", "Server started");
             }
         }
     }
 
     @Override
     public void onStop(double timestamp) {
+        mLidarServer.stop();
+        SmartDashboard.putString("Lidar/status", "Server stopped");
     }
 }
