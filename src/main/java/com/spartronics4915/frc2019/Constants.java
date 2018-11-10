@@ -138,6 +138,7 @@ public class Constants extends ConstantsBase
         public static final double kRampRate = 0.5 /* 0.5 seconds */;
         public static final int kIZone = 0;
     }; // TODO: Tune these
+    public static final Translation2d kTurretRobotCenterOffset = new Translation2d(0, 0); // TODO: Set offset
 
 
     // Path following constants -----------------------------------

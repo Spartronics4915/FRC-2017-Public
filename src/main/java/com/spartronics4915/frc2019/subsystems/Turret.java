@@ -46,6 +46,7 @@ public class Turret extends Subsystem {
     private WantedState mWantedState = WantedState.DISABLED;
     private SystemState mSystemState = SystemState.DISABLING;
     private boolean mUseLidar = false;
+    private double mLastTurretAngle = 0;
 
     private Turret() {
         mLidar = LidarProcessor.getInstance();
@@ -88,7 +89,9 @@ public class Turret extends Subsystem {
                             pose = mOdometry.getFieldToVehicle(Timer.getFPGATimestamp());
                         }
 
-                        mMotor.set(ControlMode.Position, calculateTurretRevolutions(pose, Constants.kTurretTargetFieldPosition));
+                        double newAbsoluteAngle = calculateAbsoluteTurretAngle(pose, Constants.kTurretTargetFieldPosition);
+                        mMotor.setPositionRotations(mMotor.getSensorPositionRotations() + (newAbsoluteAngle - mLastTurretAngle) / 360);
+                        mLastTurretAngle = newAbsoluteAngle;
                         break;
                     case DISABLING:
                         stop();
@@ -108,12 +111,19 @@ public class Turret extends Subsystem {
         }
     };
 
-    private static double calculateTurretRevolutions(Pose2d robotPose, Translation2d targetTranslation) {
+    /**
+     * Calculates an absolute turret angle in degrees. The range is 0-360 degrees.
+     * 
+     * 0 degrees points "right" towards the target (i.e. on the negative side of the target, where the target is the origin).
+     * Positive rotations run clockwise.
+     * 
+     * @return Absolute angle in degrees, with a range of 0-360
+    */
+    private double calculateAbsoluteTurretAngle(Pose2d robotPose, Translation2d targetTranslation) {
+        robotPose.getTranslation().translateBy(Constants.kTurretRobotCenterOffset);
         Rotation2d angle = new Rotation2d(robotPose.getTranslation().x()-targetTranslation.x(),
             robotPose.getTranslation().y()-targetTranslation.y(), true).rotateBy(robotPose.getRotation().inverse());
-        // 0 degress points "right" towards the target (on the negative side of the target, where the target is the origin)
-        // Positive rotations run clockwise
-        return (angle.getDegrees() + 180) / 360;
+        return angle.getDegrees() + 180.0;
     }
 
     private SystemState defaultStateTransfer()
