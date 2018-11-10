@@ -246,15 +246,14 @@ public class LidarProcessor implements Loop {
     @Override
     public void onLoop(double timestamp) {
         if (timestamp - getPrevTimestamp() > Constants.kLidarRestartTime) {
-            // XXX: Is this a bug? It seems like this starts and stops the LIDAR server
-            // every kLidarRestartTime seconds
-            if (mLidarServer.isRunning()) {
-                System.err.println("Lidar timed out. Restarting");
-                mLidarServer.stop();
-                SmartDashboard.putString("Lidar/status", "Server restarting (timed out)");
-            } else if (!mLidarServer.isEnding() && mLidarServer.start()) {
-                setPrevTimestamp(timestamp);
-                SmartDashboard.putString("Lidar/status", "Server started");
+            if (!mLidarServer.isEnding() && !mLidarServer.isRunning()) {
+                if (mLidarServer.start()) {
+                    setPrevTimestamp(timestamp);
+                    SmartDashboard.putString("Lidar/status", "Server started");
+                } else {
+                    SmartDashboard.putString("Lidar/status", "Server couldn't start; sensor " +
+                        (mLidarServer.isLidarConnected() ? "is" : "is not") + " connected");
+                }
             }
         }
     }
