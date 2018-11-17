@@ -38,7 +38,7 @@ public abstract class Subsystem
 
     
     protected Subsystem() // means only subclasses can exist, not Subsystems
-    {        
+    {
         String classname = this.getClass().getName();
         int tail = classname.lastIndexOf('.');
         if(tail == -1)
@@ -48,7 +48,7 @@ public abstract class Subsystem
         else
         {
             mName = classname.substring(tail+1);
-        }   
+        }
     }
     
     public String getName()
@@ -152,5 +152,5 @@ public abstract class Subsystem
     public abstract void registerEnabledLoops(Looper enabledLooper);
     
     public abstract boolean checkSystem(String variant);
-    
+
 }

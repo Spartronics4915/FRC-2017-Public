@@ -73,9 +73,9 @@ public class LidarServer {
         try {
             mProcess = new ProcessBuilder().command(Constants.kLidarPath).start();
             mThread = new Thread(new ReaderThread());
-            mThread.start();
             InputStreamReader reader = new InputStreamReader(mProcess.getInputStream());
             mBufferedReader = new BufferedReader(reader);
+            mThread.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -162,6 +162,10 @@ public class LidarServer {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    if (isLidarConnected()) {
+                        System.err.println("Lidar sensor disconnected");
+                        stop();
+                    }
                 }
             }
         }
